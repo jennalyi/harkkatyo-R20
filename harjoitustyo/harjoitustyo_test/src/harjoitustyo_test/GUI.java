@@ -30,6 +30,7 @@ public class GUI extends Application{
 	LaskujenHallinta laskut;
 	AsiakasHallinta asiakas;
 	PalveluidenHallinta palveluolio;
+	VBox boxi, boxiAsiakas;
 	Connection conn;
 	@Override 
 	public void start(Stage stage) {                     
@@ -39,18 +40,20 @@ public class GUI extends Application{
 		//Paneelien luonti
 		VBox keskipaneeli = new VBox(10); 
 		
-		//kï¿½yttï¿½liittymï¿½n nappuloiden koko
+		//käyttöliittymän nappuloiden koko
 		keskipaneeli.setPrefWidth(190);
 		VBox otsikkopaneeli = new VBox(15);
 		otsikkopaneeli.setPrefHeight(80);
+		
+		//Luodaan otsikko bordepane yläosaan
 		ekapaneeli = new BorderPane();
-		Label otsikko = new Label("Mï¿½kkien varausjï¿½rjestelmï¿½");
+		Label otsikko = new Label("Mökkien varausjärjestelmä");
 		otsikko.setFont(new Font("Arial", 25));
 		
 		scene = new Scene(ekapaneeli, 400,400);  
 
-
-		Bmokit = new Button("Toimipisteiden ja mï¿½kkien hallinta");
+		//Asetetaan napeille toiminnallisuudet
+		Bmokit = new Button("Toimipisteiden ja mökkien hallinta");
 		Bmokit.setOnAction(e -> toimipisteidenHallinta());
 		Bmokit.setMinWidth(keskipaneeli.getPrefWidth());
 		Bvaraus = new Button("Majoitusten varaaminen");
@@ -69,7 +72,7 @@ public class GUI extends Application{
 		Braportit.setMinWidth(keskipaneeli.getPrefWidth());
 		Braportit.setOnAction(e -> raportit());
 		
-		//Tietojen lisï¿½ys paneeleihin
+		//Tietojen lisäys paneeleihin
 		otsikkopaneeli.getChildren().add(otsikko);
 		otsikkopaneeli.setAlignment(Pos.CENTER);
 		ekapaneeli.setTop(otsikkopaneeli);
@@ -79,11 +82,13 @@ public class GUI extends Application{
 		
 
 
-		
-		stage.setTitle("Mï¿½kki varausjï¿½rjestelmï¿½"); 	  
+		//Stagelle otsikko ja scene
+		stage.setTitle("Mökki varausjärjestelmä"); 	  
 		stage.setScene(scene); 
 		stage.show();  
 	}
+	
+	
 	public void mokkialoita(){
 		paneeliMokit = new VBox(5);
 		scenemokit = new Scene(paneeliMokit, 400,400);
@@ -91,52 +96,70 @@ public class GUI extends Application{
 		//Mokit olioMok = new Mokit(paneeliMokit, window, scene, scenemokit);
 		window.setScene(scenemokit);
 	}
-
+	
+	//Luodaan varauslomake (varaaMokki olio) ja annetaan sille tarpeelliset parametrit
 	public void mokkivaraus(){
 		paneelivaraus = new BorderPane();
 		scenevaraus = new Scene(paneelivaraus, 500, 645);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
 		varaus = new VaraaMokki(paneelivaraus, window, scene, conn);
+		//Asetetaan uusi scene stageen
 		window.setScene(scenevaraus);
 
 	}
+	//Luodaan palvelujen hallinta lomake
 	public void palvelujenHallinta(){
 		palvelutpaneeli = new BorderPane();
 		scenepalvelut = new Scene(palvelutpaneeli, 425, 500);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
 		palveluolio = new PalveluidenHallinta(palvelutpaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
 		window.setScene(scenepalvelut);
 	}
-	
+	//Luodaan laskuhallinta lomake
 	public void laskuhallinta(){
 		laskupaneeli = new BorderPane();
 		scenelasku = new Scene(laskupaneeli, 500, 500);
-		laskut = new LaskujenHallinta(laskupaneeli, window, scene);
+		boxi = new VBox();
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		laskut = new LaskujenHallinta(laskupaneeli, window, scene, boxi);
+		//Asetetaan uusi scene stageen
 		window.setScene(scenelasku);
 
 	}
+	//Luodaan asiakkaathallinta lomake
 	public void asiakkaathallinta(){
 		asiakaspaneeli = new BorderPane();
-		sceneasiakas = new Scene(asiakaspaneeli, 500, 500);
-		asiakas = new AsiakasHallinta(asiakaspaneeli, window, scene);
+		sceneasiakas = new Scene(asiakaspaneeli, 400, 420);
+		boxiAsiakas = new VBox();
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		asiakas = new AsiakasHallinta(asiakaspaneeli, window, scene,boxiAsiakas, conn);
+		//Asetetaan uusi scene stageen
 		window.setScene(sceneasiakas);
 
 	}
-	
+	//Luodaan toimipisteidenHallinta lomake
 	public void toimipisteidenHallinta(){
 		toimipaneeli = new BorderPane();
 		scenetoimi = new Scene(toimipaneeli, 425, 645);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
 		toimiolio = new ToimipisteidenHallinta(toimipaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
 		window.setScene(scenetoimi);
 
 	}
+	//Luodaan raportit lomake
 	public void raportit(){
 		raportitpaneeli = new BorderPane();
-		sceneraportit= new Scene(raportitpaneeli, 500, 500);
-		raportitolio = new Raportit(raportitpaneeli, window, scene);
+		sceneraportit= new Scene(raportitpaneeli, 400, 400);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		raportitolio = new Raportit(raportitpaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
 		window.setScene(sceneraportit);
 
 	}
 	
-	
+	//Suoritetaan kantaan yhdistäminen
 	public void kantaanyhdistys(){
 		try {
 			//STEP 2: Register JDBC driver
@@ -144,16 +167,10 @@ public class GUI extends Application{
 
 			//STEP 3: Open a connection
 			System.out.println("Connecting to a selected database...");
+			//Asetetaan osoite, käyttäjä ja salasana
 			conn = DriverManager.getConnection(
-					
-			///!!!!!!!!!!!!!!!!		
-			//MUUTTAKAA SALASANA MIKï¿½ TEILLï¿½ ON MARIADB SSï¿½ SANAN XXXX TILALLE
-					"jdbc:mariadb://127.0.0.1/vp", "root", "");
+					"jdbc:mariadb://127.0.0.1/vp", "root", "Jiklaaee870");
 			System.out.println("Connected database successfully...");
-			
-			
-			
-			
 
 		} catch (SQLException se) {
 			//Handle errors for JDBC
@@ -168,7 +185,7 @@ public class GUI extends Application{
 
 	}
 	
-
+	//Käynistetään koko ohjelma
 	public static void main(String args[]){ 
 		launch(args); 
 	} 

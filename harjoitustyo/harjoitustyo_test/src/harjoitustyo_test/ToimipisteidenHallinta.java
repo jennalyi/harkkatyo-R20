@@ -44,38 +44,49 @@ public class ToimipisteidenHallinta {
 		this.paasivu = paasivu;
 		this.conn = conn;
 		
+		//Luodaan olio käsittelemään tietokanta operaatiota
 		paikkaolio = new ToimiMokkiKanta(conn);
 		
+		//Luodaan otsikko teksit
 		paaotsikko = new Label("Toimipisteiden ja mökkien hallinta");
 		paaotsikko.setFont(new Font("Arial", 20));
 		paaotsikko.setStyle("-fx-padding: 10 0 0 30;");
 		
+		//Luodaan kentille gridpane
 		kentat = new GridPane();
 		kentat.setPadding(new Insets(10,30,10,50));
 		
+		//luodaan napeille gridpane
 		napit = new GridPane();
 		napit.setPrefWidth(125);
 		napit.setPadding(new Insets(70,0,0,0));
 		napit.setVgap(5.0);
+		
+		 //asetaan borderpane ylätasolle
 		paneelitoimi.setTop(paaotsikko);
+		//Asetetaan luodut paneelit borderpaneen
 		paneelitoimi.setLeft(kentat);
 		paneelitoimi.setCenter(napit);
 		
+		//Luo kentät
 		tekstikenttienluonti();
+		//Luo napit
 		nappienLuonti();
+		//Asetetaan luodut kentät ja napit paneeliin
 		kenttienNappienAsettaminen();
 		
+		//Luodaan takaisin nappi ja asetetaan se borderpaneen
 		Btakaisin = new Button("Takaisin");
-		
 		paneelitoimi.setBottom(Btakaisin);
 		paneelitoimi.setPadding(new Insets(0,0,10,10));
+		
+		//Asetetaan napeille toiminnallisuudet
 		Btakaisin.setOnAction(e -> window.setScene(paasivu));
 		toiLisaa.setOnAction(e -> lisaaToimi());
 		toiMuokkaa.setOnAction(e -> muokkaaToimi());
 		toiPoista.setOnAction(e -> poistaToimi());
 		toiHae.setOnAction(e -> haeToimi());
-		toiTyhjenna.setOnAction(e -> tyhjennaToimi());
-		
+		toiTyhjenna.setOnAction(e -> tyhjennaToimi());		
 		mokLisaa.setOnAction(e -> lisaaMokki());
 		mokMuokkaa.setOnAction(e -> muokkaaMokki());
 		mokTyhjenna.setOnAction(e -> tyhjennaMokki());
@@ -84,8 +95,9 @@ public class ToimipisteidenHallinta {
 		
 
 }
-	
+	//Luodaan tekstit 
 	public void tekstikenttienluonti(){
+		//Toimipisteen tekstit luodaan
 		Ltoimipiste = new Label("Toimipisteet ");
 		Ltoimipiste.setStyle("-fx-padding: 10 0 10 30;");
 		Ltoimipiste.setFont(new Font("Arial", 16));
@@ -97,6 +109,7 @@ public class ToimipisteidenHallinta {
 		Ltoiemail = new Label("Sähköpostiosoite");
 		Ltoipuh = new Label("Puhelinnumero");
 		
+		//Mökkien tekstit luodaan
 		Lmokki = new Label("Mökit");
 		Lmokki.setStyle("-fx-padding: 10 0 10 30;");
 		Lmokki.setFont(new Font("Arial", 16));
@@ -105,34 +118,38 @@ public class ToimipisteidenHallinta {
 		Lmoknimi = new Label("Nimi");
 		LmokHinta = new Label("Hinta");
 		
+		//Toimipisteiden haku ilmoitukset
 		Lvali = new Label("");
 		Lvirhe = new Label("");
 		Lvirhe2 = new Label("");
 		Lvali.setStyle("-fx-padding: 105 0 0 0;");
 		
+		//Mökkien haku ilmoitukset
 		LmokVirhe = new Label("");
 		LmokVirhe2 = new Label("");
 		
 	}
+	//Luodaan napit
 	public void nappienLuonti(){
+		//Toimipisteen nappien luonti
 		toiHae = new Button("Hae");
 		toiLisaa = new Button("Lisää");
 		toiPoista = new Button("Poista");
 		toiMuokkaa = new Button("Muokkaa");
 		toiTyhjenna = new Button("Hae tai lisää uusi");
-		
+		//Toimipisteen nappien koon asettaminen
 		toiHae.setMinWidth(napit.getPrefWidth());
 		toiLisaa.setMinWidth(napit.getPrefWidth());
 		toiPoista.setMinWidth(napit.getPrefWidth());
 		toiMuokkaa.setMinWidth(napit.getPrefWidth());
 		toiTyhjenna.setMinWidth(napit.getPrefWidth());
-		
+		//Mökkien nappien luonti
 		mokHae = new Button("Hae");
 		mokLisaa = new Button("Lisää");
 		mokPoista = new Button("Poista");
 		mokMuokkaa = new Button("Muokkaa");
 		mokTyhjenna = new Button("Hae tai lisää uusi");
-		
+		//Mökkien nappien koon asettaminen
 		mokHae.setMinWidth(napit.getPrefWidth());
 		mokLisaa.setMinWidth(napit.getPrefWidth());
 		mokPoista.setMinWidth(napit.getPrefWidth());
@@ -140,8 +157,9 @@ public class ToimipisteidenHallinta {
 		mokTyhjenna.setMinWidth(napit.getPrefWidth());
 	}
 
-	
+	//Asetetaan tekstit, tekstikentät ja napit paneeliin
 	public void kenttienNappienAsettaminen(){
+		//Asetetaan toimipiste tekstit ja kentät paneeliin
 		kentat.add(Ltoimipiste, 0, 0);
 		kentat.add(LtoiID, 0, 1);
 		kentat.add(TtoiID = new TextField(), 0, 2);
@@ -157,7 +175,7 @@ public class ToimipisteidenHallinta {
 		kentat.add(Ttoiemail= new TextField(), 0, 12);
 		kentat.add(Ltoipuh, 0, 13);
 		kentat.add(Ttoipuh = new TextField(), 0, 14);
-		
+		//Asetetaan mökkien tekstit ja kentät paneeliin
 		kentat.add(Lmokki, 0, 15);
 		kentat.add(LtoimiMokki, 0, 16);
 		kentat.add(TtoimiMokki = new TextField(), 0, 17);
@@ -167,33 +185,36 @@ public class ToimipisteidenHallinta {
 		kentat.add(Tmoknimi = new TextField(), 0, 21);
 		kentat.add(LmokHinta, 0, 22);
 		kentat.add(TmokHinta = new TextField(), 0, 23);
-		
-		//Label Lmokki, LtoimiMokki, LmokID, Lmoknimi, LmokHinta;
-		
+		//Asetetaan toimipiste napit paneeliin
 		napit.add(toiHae, 0, 0);
 		napit.add(toiLisaa,0,1);
 		napit.add(toiPoista, 0, 4);
 		napit.add(toiMuokkaa, 0, 5);
 		napit.add(toiTyhjenna, 0, 2);
-		
+		//Asetetaan toimipiste haku ilmoitukset paneeliin
 		napit.add(Lvirhe, 0, 6);
 		napit.add(Lvirhe2, 0, 7);
 		napit.add(Lvali, 0, 8);
+		
+		//Asetetaan mökki napit paneeliin
 		napit.add(mokHae, 0, 9);
 		napit.add(mokLisaa,0,10);
 		napit.add(mokPoista, 0, 12);
 		napit.add(mokMuokkaa, 0, 13);
 		napit.add(mokTyhjenna, 0, 11);
-		
+		//Asetetaan mökki haku ilmoitukset paneeliin
 		napit.add(LmokVirhe, 0, 14);
 		napit.add(LmokVirhe2, 0, 15);
 		
+		//Poista ja muokkaa nappit näkymättömäksi aluksi
 		toiMuokkaa.setVisible(false);
 		toiPoista.setVisible(false);
 		mokMuokkaa.setVisible(false);
 		mokPoista.setVisible(false);
 		
 	}
+	
+	//Lisätään toimipiste
 	public void lisaaToimi(){
 		
 		toimipisteID = 0;
@@ -216,7 +237,7 @@ public class ToimipisteidenHallinta {
 				toimipisteID = Integer.parseInt(TtoiID.getText());
 				int tulos = paikkaolio.lisaaToimi(toimipisteID, Ttoinimi.getText(), Ttoilah.getText(), Ttoipostipaikka.getText()
 						, Ttoipostnum.getText(),Ttoiemail.getText(),Ttoipuh.getText());
-				System.out.print(tulos);
+				
 				//jos lisäys onnistui
 				if(tulos ==1){
 					Lvirhe.setText("Lisäys onnistui");
@@ -242,6 +263,7 @@ public class ToimipisteidenHallinta {
 
 	}
 	
+	//Muokataan toimipistettä
 	public void muokkaaToimi(){		
 		try{
 			//Tarkastetaan että nimi kenttä täytetty
@@ -279,7 +301,7 @@ public class ToimipisteidenHallinta {
 
 	}
 	
-	
+	//Poistetaan toimipiste
 	public void poistaToimi(){
 
 			//Tarkastetaan että nimi kenttä täytetty
@@ -316,10 +338,11 @@ public class ToimipisteidenHallinta {
 				Lvirhe.setText("Tunnus tai nimi pakollinen");
 			}
 			else{
+				//Haetaan nimen perusteella
 				if(TtoiID.getText().isEmpty()){
 					toimipisteID = 0;
 					tulokset = paikkaolio.haeToimi(toimipisteID, Ttoinimi.getText());						
-					
+				//Haetaan nimen tai toimipiste_id tai kummankin perusteella	
 				}else{
 				toimipisteID = Integer.parseInt(TtoiID.getText());
 				tulokset = paikkaolio.haeToimi(toimipisteID, Ttoinimi.getText());
@@ -328,6 +351,7 @@ public class ToimipisteidenHallinta {
 				if(tulokset.get(0).equals("1")){					
 					Lvirhe.setText("Haku onnistui");
 					
+					//Asetetaan tulokset kenttiin
 					TtoiID.setText(tulokset.get(1));
 					Ttoinimi.setText(tulokset.get(2));
 					Ttoilah.setText(tulokset.get(3));
@@ -335,14 +359,16 @@ public class ToimipisteidenHallinta {
 					Ttoipostnum.setText(tulokset.get(5));
 					Ttoiemail.setText(tulokset.get(6));
 					Ttoipuh.setText(tulokset.get(7));
+					//Disabloidaan id ettei sitä voi muuttaa
 					TtoiID.setDisable(true);
+					//lisää ja hae napit näkymättömäksi
 					toiLisaa.setVisible(false);
 					toiHae.setVisible(false);
-					
-					
+
 					toiMuokkaa.setVisible(true);
 					toiPoista.setVisible(true);
 				}
+				//Jos kannasta löytyi monta riviä haulla
 				else if(tulokset.get(0).equals("4")){
 					Lvirhe.setText("Löytyi monta tulosta");
 					Lvirhe2.setText("Syötä myös tunnus");
@@ -351,6 +377,7 @@ public class ToimipisteidenHallinta {
 				else if(tulokset.get(0).equals("3")){
 					Lvirhe.setText("Tietokanta virhe");
 				}
+				//Haulla ei löydy tuloksia
 				else if(tulokset.get(0).equals("5")){
 					Lvirhe.setText("Toimipistettä ei ole olemassa");
 				}
@@ -366,6 +393,7 @@ public class ToimipisteidenHallinta {
 
 	}
 	
+	//Lisätään mökki
 	public void lisaaMokki(){
 		LmokVirhe2.setText("");
 		mokkiID = 0;
@@ -392,10 +420,11 @@ public class ToimipisteidenHallinta {
 					mokPoista.setVisible(true);
 					mokHae.setVisible(false);
 					mokLisaa.setVisible(false);
+					//mokki_id disableksi ettei sitä voi muokata
 					TmokID.setDisable(true);
 
 				}
-				//tuli jokin tietokanta virhe, uskoisin samasta id stä
+				//tuli jokin tietokanta virhe,  samasta mokki_id stä tai toimipistettä ei löydy
 				else if(tulos==3){
 					LmokVirhe.setText("Mökki id on käytössä tai");
 					LmokVirhe2.setText("toimipistettä ei löydy");
@@ -412,6 +441,8 @@ public class ToimipisteidenHallinta {
 
 	}
 	
+	
+	//Muokataan mökkiä
 	public void muokkaaMokki(){		
 		try{
 			//Tarkastetaan että kaikki kenttät on täytetty
@@ -428,7 +459,7 @@ public class ToimipisteidenHallinta {
 					LmokVirhe.setText("Muokkaus onnistui");
 
 				}
-				//tuli jokin tietokanta virhe, uskoisin samasta id stä
+				//tuli jokin tietokanta virhe, toimipistettä ei löydy
 				else if(tulos==3){
 					LmokVirhe.setText("toimipistettä ei löydy");
 				}
@@ -445,6 +476,7 @@ public class ToimipisteidenHallinta {
 
 	}
 	
+	//Poista mökki
 	public void poistaMokki(){
 
 		//Tarkastetaan että nimi kenttä täytetty
@@ -481,28 +513,31 @@ public class ToimipisteidenHallinta {
 				LmokVirhe.setText("Tunnus tai nimi pakollinen");
 			}
 			else{
+				//Haetaan nimen perusteella
 				if(TmokID.getText().isEmpty()){
 					mokkiID = 0;
 					tulokset = paikkaolio.haeMokki(mokkiID, Tmoknimi.getText());						
-					
+				//Haetaan nimen tai mokki_id perusteella tai kummankin
 				}else{
 				mokkiID = Integer.parseInt(TmokID.getText());
 				tulokset = paikkaolio.haeMokki(mokkiID, Tmoknimi.getText());
 				}
 				//jos Haku onnistui
-				if(tulokset.get(0).equals("1")){					
+				if(tulokset.get(0).equals("1")){	
+					//Asetetaan kenttiin tekstit
 					LmokVirhe.setText("Haku onnistui");
 					TtoimiMokki.setText(tulokset.get(1));
 					TmokID.setText(tulokset.get(2));
 					Tmoknimi.setText(tulokset.get(3));
 					TmokHinta.setText(tulokset.get(4));					
-					
+					//Napeille näkyvyydet
 					mokMuokkaa.setVisible(true);
 					mokPoista.setVisible(true);
 					TmokID.setDisable(true);
 					mokHae.setVisible(false);
 					mokLisaa.setVisible(false);
 				}
+				//Jos haku palautti useita rivejä, ohjeistetaan käyttäjää miten toimia
 				else if(tulokset.get(0).equals("4")){
 					LmokVirhe.setText("Löytyi monta tulosta");
 					LmokVirhe2.setText("Syötä myös tunnus");
@@ -511,6 +546,7 @@ public class ToimipisteidenHallinta {
 				else if(tulokset.get(0).equals("3")){
 					LmokVirhe.setText("Tietokanta virhe");
 				}
+				//Haulla ei löytynyt mökkiä
 				else if(tulokset.get(0).equals("5")){
 					LmokVirhe.setText("Mökkiä ei ole olemassa");
 				}
@@ -525,7 +561,8 @@ public class ToimipisteidenHallinta {
 		}
 
 	}
-	
+	//Tyhjennetään toimipisteen haku tulos tekstit ja tekstikentät sekä toimipiste id disable pois päältä
+	//Lisäksi napeille näkyvyydet
 	public void tyhjennaToimi(){
 		TtoiID.setText("");
 		Ttoinimi.setText("");
@@ -546,6 +583,8 @@ public class ToimipisteidenHallinta {
 		Lvirhe2.setText("");
 		
 	}
+	//Tyhjennetään mokkien haku tulos tekstit ja tekstikentät sekä toimipiste id disable pois päältä
+	//Lisäksi napeille näkyvyydet
 	public void tyhjennaMokki(){
 		TtoimiMokki.setText("");
 		TmokHinta.setText("");

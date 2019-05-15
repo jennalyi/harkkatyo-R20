@@ -36,33 +36,41 @@ public class PalveluidenHallinta {
 		this.window = window;
 		this.paasivu = paasivu;
 		this.conn = conn;
-
+		
+		//Luodaan olio, jonka kautta suoritetaan tietokanta operaatioita
 		palveluolio = new PalveluidenHallintaKanta(conn);
-
+		
+		//Luodaan lomakkeen otsikko
 		paaotsikko = new Label("Palveluiden hallinta");
 		paaotsikko.setFont(new Font("Arial", 20));
 		paaotsikko.setStyle("-fx-padding: 10 0 0 30;");
-
+		
+		//Luodaan teksteille ja teksti kentille gridpane
 		kentat = new GridPane();
 		kentat.setPadding(new Insets(20,30,10,50));
-
+		//Luodaan napeille gridpane
 		napit = new GridPane();
 		napit.setPrefWidth(125);
 		napit.setPadding(new Insets(30,0,0,0));
 		napit.setVgap(5.0);
+		//Asetetaan otsikko ja luodut gridpanet borderpaneen
 		paneeliPalvelut.setTop(paaotsikko);
 		paneeliPalvelut.setLeft(kentat);
 		paneeliPalvelut.setCenter(napit);
-
+		
+		//Luodaan tekstikentät
 		tekstikenttienluonti();
+		//Luodaan napit
 		nappienLuonti();
+		//Luodaan tekstit ja asetaan ne ja tekstikentät sekä napit gridpaneihin
 		kenttienNappienAsettaminen();
-
+		
+		//Takaisin nappulan luonti jolla palataan pääsivulle
 		Btakaisin = new Button("Takaisin");
-
 		paneeliPalvelut.setBottom(Btakaisin);
 		paneeliPalvelut.setPadding(new Insets(0,0,10,10));
-
+		
+		//Asetetaan napeille toiminnallisuudet
 		Btakaisin.setOnAction(e -> window.setScene(paasivu));
 		palLisaa.setOnAction(e -> lisaaPalvelu());
 		palMuokkaa.setOnAction(e -> muokkaaPalvelua());
@@ -70,7 +78,7 @@ public class PalveluidenHallinta {
 		palTyhjenna.setOnAction(e -> tyhjennaPalvelu());
 		palPoista.setOnAction(e -> poistaPalvelu());
 	}
-
+	//Luodaan tekstikentät
 	public void tekstikenttienluonti(){	
 		LpalID = new Label("Palvelun tunnus *");
 		LtoiID = new Label("Toimipisteen tunnus *");
@@ -84,6 +92,7 @@ public class PalveluidenHallinta {
 		LpalVirhe2 = new Label("");
 
 	}
+	//Luodaan napit
 	public void nappienLuonti(){
 		palHae = new Button("Hae");
 		palLisaa = new Button("Lisää");
@@ -97,9 +106,12 @@ public class PalveluidenHallinta {
 		palMuokkaa.setMinWidth(napit.getPrefWidth());
 		palTyhjenna.setMinWidth(napit.getPrefWidth());
 	}
-
+	
+	/**
+	 * Luodaan tekstit ja asetetaan ne sekä napit ja teksti kentät gridpaneen
+	 */
 	public void kenttienNappienAsettaminen(){
-
+		//Tekstit ja kentät
 		kentat.add(LpalID, 0, 1);
 		kentat.add(TpalID = new TextField(), 0, 2);
 		kentat.add(LtoiID, 0, 3);
@@ -114,10 +126,10 @@ public class PalveluidenHallinta {
 		kentat.add(TpalHinta = new TextField(), 0, 12);
 		kentat.add(LpalAlv, 0, 13);
 		kentat.add(TpalAlv = new TextField(), 0, 14);		
-
+		
 		TpalKuvaus.setPrefWidth(175);
 		TpalKuvaus.setWrapText(true);
-		
+		//Nappien lisäys
 		napit.add(palHae, 0, 1);
 		napit.add(palLisaa,0,2);
 		napit.add(palTyhjenna, 0, 3);
@@ -131,6 +143,10 @@ public class PalveluidenHallinta {
 		palPoista.setVisible(false);
 
 	}
+	
+	/**
+	 * Lisätään uusi palvelu
+	 */
 	public void lisaaPalvelu(){
 
 		palveluID = 0;
@@ -157,7 +173,7 @@ public class PalveluidenHallinta {
 				
 				int tulos = palveluolio.lisaaPalvelu(palveluID,toiimiID, Tpalnimi.getText(),Integer.parseInt(TpalTyyppi.getText())
 						, TpalKuvaus.getText(),hintaa, Double.parseDouble(TpalAlv.getText()));
-				System.out.print(tulos);
+
 				//jos lisäys onnistui
 				if(tulos ==1){
 					LpalVirhe.setText("Lisäys onnistui");
@@ -168,7 +184,7 @@ public class PalveluidenHallinta {
 					TpalID.setDisable(true);
 
 				}
-				//tuli jokin tietokanta virhe, uskoisin samasta id stä
+				//tuli jokin tietokanta virhe,  samasta id stä tai ei toimipistettä olemassa
 				else if(tulos==3){
 					LpalVirhe.setText("Palvelu id on käytössä tai");
 					LpalVirhe2.setText("toimipistettä ei löydy");
@@ -187,6 +203,9 @@ public class PalveluidenHallinta {
 
 	}//lisää palvelu
 	
+	/**
+	 * Muokkaa palvelua
+	 */
 	public void muokkaaPalvelua(){		
 		try{
 			//Tarkastetaan että kaikki kenttät on täytetty
@@ -198,6 +217,7 @@ public class PalveluidenHallinta {
 				int toiimiID = Integer.parseInt(TtoiID.getText());
 				double hintaa = Double.parseDouble(TpalHinta.getText());
 				int palIDD = Integer.parseInt(TpalID.getText());
+				//Suoritetaan muokkaus palveluoliossa
 				int tulos = palveluolio.muokkaaPalvelua(palIDD,toiimiID, Tpalnimi.getText(),Integer.parseInt(TpalTyyppi.getText())
 						, TpalKuvaus.getText(),hintaa, Double.parseDouble(TpalAlv.getText()));
 				
@@ -206,7 +226,7 @@ public class PalveluidenHallinta {
 					LpalVirhe.setText("Muokkaus onnistui");
 
 				}
-				//tuli jokin tietokanta virhe, uskoisin samasta id stä
+				//tuli jokin tietokanta virhe, toimipistettä ei löydy
 				else if(tulos==3){
 					LpalVirhe.setText("toimipistettä ei löydy");
 				}
@@ -222,7 +242,9 @@ public class PalveluidenHallinta {
 		}
 
 	}
-	
+	/**
+	 * Poistetaan palvelu
+	 */
 	public void poistaPalvelu(){
 		try{
 		int palIDD = Integer.parseInt(TpalID.getText());
@@ -265,10 +287,11 @@ public class PalveluidenHallinta {
 				LpalVirhe.setText("Tunnus tai nimi pakollinen");
 			}
 			else{
+				//Haetaan nimen perusteella
 				if(TpalID.getText().isEmpty()){
 					palveluID = 0;
 					tulokset = palveluolio.haePalvelu(palveluID, Tpalnimi.getText());						
-					
+				//Haetaan nimen tai palvelu id perusteella tai kummankin perusteella
 				}else{
 				palveluID = Integer.parseInt(TpalID.getText());
 				tulokset = palveluolio.haePalvelu(palveluID, Tpalnimi.getText());
@@ -276,7 +299,7 @@ public class PalveluidenHallinta {
 				//jos Haku onnistui
 				if(tulokset.get(0).equals("1")){					
 					LpalVirhe.setText("Haku onnistui");
-					
+					//Tekstit tekstikenttiin
 					TpalID.setText(tulokset.get(1));
 					TtoiID.setText(tulokset.get(2));
 					Tpalnimi.setText(tulokset.get(3));
@@ -284,13 +307,14 @@ public class PalveluidenHallinta {
 					TpalKuvaus.setText(tulokset.get(5));
 					TpalHinta.setText(tulokset.get(6));
 					TpalAlv.setText(tulokset.get(7));
-					
+					//Asetetaan haun jälkeinen näkyvyys napeille
 					palMuokkaa.setVisible(true);
 					palPoista.setVisible(true);
 					TpalID.setDisable(true);
 					palHae.setVisible(false);
 					palLisaa.setVisible(false);
 				}
+				//Jos haku palautti monta riviä
 				else if(tulokset.get(0).equals("4")){
 					LpalVirhe.setText("Löytyi monta tulosta");
 					LpalVirhe2.setText("Syötä myös tunnus");
@@ -299,6 +323,7 @@ public class PalveluidenHallinta {
 				else if(tulokset.get(0).equals("3")){
 					LpalVirhe.setText("Tietokanta virhe");
 				}
+				//Haulla ei löytynyt mitään
 				else if(tulokset.get(0).equals("5")){
 					LpalVirhe.setText("Palvelua ei ole olemassa");
 				}
@@ -314,8 +339,11 @@ public class PalveluidenHallinta {
 
 	}//hae palvelu
 	
-	
+	/**
+	 * Tyhjennetään lomake
+	 */
 	public void tyhjennaPalvelu(){
+		//Teksti kentien tyhjennys
 		TpalID.setText("");
 		TtoiID.setText("");
 		Tpalnimi.setText("");
@@ -323,10 +351,10 @@ public class PalveluidenHallinta {
 		TpalKuvaus.setText("");
 		TpalHinta.setText("");
 		TpalAlv.setText("");
-		
+		//Poista ja muokkaa nappi pois näkyvistä
 		palMuokkaa.setVisible(false);
 		palPoista.setVisible(false);
-		
+		//palvelu id disable pois päältä
 		TpalID.setDisable(false);
 		
 		palLisaa.setVisible(true);

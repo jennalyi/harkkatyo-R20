@@ -21,9 +21,10 @@ public class Kanta {
 	public Kanta(Connection conn) {
 		this.conn = conn;
 		conn = null;
-
+	
 	}//end main
-
+	
+	//Haetaan kannasta asiakkaan nimi ja puhelinnumero tiedot
 	public String haetaanAsiakas(int id){
 		String sql = "SELECT etunimi, sukunimi, puhelinnro" 
 				+ " FROM Asiakas WHERE asiakas_id = ?"; // ehdon arvo asetetaan jäljempänä
@@ -36,11 +37,13 @@ public class Kanta {
 			lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+			
+			//Jos löydetään tuloksia
 			if (tulosjoukko.next () == true){
-				//haku = tulosjoukko.getString("etunimi");
+				//Luodaan palautettava merkkijono jossa asiakkaan etunimi ja sukunimi
 				haku = "Asiakas: "+tulosjoukko.getString("etunimi")+" "+tulosjoukko.getString("sukunimi");
 				asiakasID = id;
+			//Jos asiakasta ei löydy palautetaan siitä tieto
 			}else{
 				haku = "Asiakasta ei löydy";
 				asiakasID = 0;
@@ -58,7 +61,7 @@ public class Kanta {
 		return haku;
 	}//haetaanAsiakas
 
-
+	//Haetaan toimipaikka
 	public String haetaanPaikka(int id){
 		String sql = "SELECT nimi" 
 				+ " FROM Toimipiste WHERE toimipiste_id = ?"; // ehdon arvo asetetaan jäljempänä
@@ -71,10 +74,10 @@ public class Kanta {
 			lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+			
+				//Palautetaan toimipaikan nimi
 				if (tulosjoukko.next () == true){
-					//haku = tulosjoukko.getString("etunimi");
-					//System.out.println("Ei loydy asiakasta 12001...");
+				
 					haku = "Toimipaikka: \n"+tulosjoukko.getString("nimi");
 				}else{
 					haku = "Toimipaikkaa ei löydy";
@@ -92,7 +95,7 @@ public class Kanta {
 		return haku;
 	}//haetaanToimipiste
 	
-	
+	//Haetaan kannasta mökki
 	public String haetaanMokki(int id, int toimipiste){
 		String sql = "SELECT nimi" 
 				+ " FROM Mokki WHERE Mokki_id = ? AND toimipiste_id = ?"; // ehdon arvo asetetaan jäljempänä
@@ -106,13 +109,14 @@ public class Kanta {
 			lause.setInt( 2, toimipiste);// asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+				
+			//Palautetaan löydetty mökki ja päivitetään muuttujat mokkiID ja toimiID
 				if (tulosjoukko.next () == true){
-					//haku = tulosjoukko.getString("etunimi");
-					
+
 					haku = "Mökki: \n"+tulosjoukko.getString("nimi");
 					mokkiID = id;
 					toimiID = toimipiste;
+				//Palautetaan ei löytynyt ja nollataan muuttujat mokkiID ja toimiID
 				}else{
 					haku = "Mökkiä ei löydy";
 					mokkiID = 0;
@@ -131,16 +135,17 @@ public class Kanta {
 		return haku;
 	}//haetaanMökki
 	
+	//Tehdään varaus
 	public int varaaMokki(int varausID, Date varattu, Date vahvistus, Date alotus, Date lopetus){
 		int lkm = 0;
 		int onnistuiko = 2;
+		//Luodaan kysely
 		String sql = "INSERT INTO Varaus "
 		+ "(varaus_id, asiakas_id, toimipiste_id , mokki_id , varattu_pvm , vahvistus_pvm, varattu_alkupvm, varattu_loppupvm) "
 		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		PreparedStatement lause = null;
 		//tarkistetaan että kaikilla tiedoilla on arvo
-		System.out.println("täällä"+(asiakasID != 0 && toimiID != 0 &&mokkiID != 0));
 		if(asiakasID != 0 && toimiID != 0 &&mokkiID != 0){
 		onnistuiko = 1;	
 		varaus = varausID;
@@ -171,28 +176,29 @@ public class Kanta {
             // JDBC virheet
             e.printStackTrace();
 		}
-	}
+	}	
+		//Palautetaan varauksen tulos 
 		return onnistuiko;
 	}
 	
+	//Haetaan kaikkien varauksien päivät, jotta voidaan tarkistaa ettei päälekkäisiä varauksia voi tehdä
 	public ArrayList<Pari> haetaanPaivat(int id){
 		String sql = "SELECT varattu_alkupvm, varattu_loppupvm" 
 				+ " FROM Varaus WHERE mokki_id = ?"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
 		Date haku = null;
+		//Luodaan paivat arraylist johon asetetaan Pari tyyppiset oliot ja siten haun tulokset
 		ArrayList<Pari> paivat = new ArrayList<Pari>();
-		//ArrayList<LocalDate> paivat = new ArrayList<LocalDate>();
 		try {
 			// luo PreparedStatement-olio sql-lauseelle
 			lause = conn.prepareStatement(sql);
 			lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+				
+				//Otetaan alku ja loppupäivä ja lisätään ne pari olioon ja tämä taas paivat arraylistiin
 				if (tulosjoukko.next () == true){
-					//haku = tulosjoukko.getString("etunimi");
-					//System.out.println("Ei loydy asiakasta 12001...");
 					LocalDate paiv = tulosjoukko.getDate("varattu_alkupvm").toLocalDate();
 					LocalDate loppupaiv = tulosjoukko.getDate("varattu_loppupvm").toLocalDate();
 					Pari pari = new Pari(paiv,loppupaiv);
@@ -207,7 +213,7 @@ public class Kanta {
 				}else{
 					paivat = null;
 				}
-
+				//Suljetaan yhteydet
 				tulosjoukko.close();
 				lause.close();
 		} catch (SQLException se) {
@@ -221,6 +227,7 @@ public class Kanta {
 		return paivat;
 	}//haetaanPaivat
 	
+	//Haetaan tietyn mökin hinta
 	public int haetaanMokkiHinta(){
 		String sql = "SELECT hinta" 
 				+ " FROM Mokki WHERE mokki_id = ?"; // ehdon arvo asetetaan jäljempänä
@@ -234,16 +241,15 @@ public class Kanta {
 			lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+				
+			//Palautetaan hinta ja kasvatetaan tämän olion hinta muuttujaa palautetun arvon verran
 				if (tulosjoukko.next () == true){
-					//haku = tulosjoukko.getString("etunimi");
-					//System.out.println("Ei loydy asiakasta 12001...");
 					haku = tulosjoukko.getInt("hinta");
 					hinta += haku;
 				}else{
 					haku = 0;
 				}
-
+				//Suljetaan yhteys
 				tulosjoukko.close();
 				lause.close();
 		} catch (SQLException se) {
@@ -257,11 +263,12 @@ public class Kanta {
 		return haku;
 	}//haetaanPaivat
 	
+	//Lisätään palvelu
 	public String lisaaPalv(int id){
+		//Haetaan palvelun hinta ja nimi
 		String sql = "SELECT nimi, hinta" 
 				+ " FROM Palvelu WHERE toimipiste_id = ? AND palvelu_id = ?"; // ehdon arvo asetetaan jäljempänä
-		
-		
+
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
 		String haku = null;
@@ -275,13 +282,13 @@ public class Kanta {
 			tulosjoukko = lause.executeQuery();	
 
 				if (tulosjoukko.next () == true){
+					//Lisätään haluttu palvelu
 					String sql2 = "INSERT INTO Varauksen_palvelut "
 							+ "(varaus_id, palvelu_id, lkm ) "
 							+ " VALUES (?, ?, ?)";
 	
 					// luo PreparedStatement-olio sql-lauseelle
 					lause = conn.prepareStatement(sql2);
-					System.out.println("varaus: "+ varaus +"  "+id);
 					// laitetaan arvot INSERTtiin
 					lause.setInt( 1, varaus);
 					lause.setInt(2, id); 
@@ -293,6 +300,7 @@ public class Kanta {
 						haku = null;
 						System.out.println("Ei onnistu...");
 					}
+					//Palautetaan lisätyn palvelun nimi ja hinta
 					else{
 						hinta += tulosjoukko.getInt("hinta");
 						haku = tulosjoukko.getString("nimi");
@@ -315,12 +323,15 @@ public class Kanta {
 		
 		return haku;
 	}//haetaanToimipiste
+	
+	//Voidaan hakea hinta muuttuja
 	public int gethinta(){
 		return hinta;
 	}
 	
-	
+	//Poistetaan palvelu
 	public String poistaPalvelu(int palveluid){
+		//Luodaan poisto lause
 		String sql = "DELETE FROM  Varauksen_palvelut  WHERE varaus_id  = ? AND palvelu_id = ?";
 		PreparedStatement lause = null;
 		String tulos = null;
@@ -335,6 +346,8 @@ public class Kanta {
 			int lkm = lause.executeUpdate();	
 			if (lkm == 0) {
 				tulos = null;
+				
+			//Haetaan poistetun hinta jotta voidaan vähentää summaa, palauttaa hinta muuttujan vähennettynä poistetun hinta
 			}else{
 				tulos = "onnistui";
 				sql = "SELECT nimi, hinta" 
@@ -349,6 +362,7 @@ public class Kanta {
 					hinta -= tulosjoukko.getInt("hinta");
 					}
 			}
+			//Suljetaan yhteys
 			lause.close();
 			tulosjoukko.close();
 			} catch (SQLException se) {
@@ -361,11 +375,14 @@ public class Kanta {
 		}
 		return tulos;
 	}
+	
+	//Haetaan varaus
 	public VarausTiedot haetaanVaraus(int id){
 		String sql = "SELECT asiakas_id, toimipiste_id, mokki_id, varattu_alkupvm,varattu_loppupvm " 
 				+ " FROM Varaus WHERE varaus_id = ?"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
+		//Luodaan olio, jonka avulla voidaan palauttaa haetut tiedot
 		VarausTiedot varausolio = new VarausTiedot();
 		try {
 			// luo PreparedStatement-olio sql-lauseelle
@@ -374,11 +391,9 @@ public class Kanta {
 
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+			
+				//Haetaan tuloksesta tiedot ja asetetaan ne varausolio olioon
 				if (tulosjoukko.next () == true){
-					//haku = tulosjoukko.getString("etunimi");
-					
-					//PÄIVÄT PITÄÄ HAKEA TÄYTYY HOITAA OLIOLLA
 					varaus = id; 
 					asiakasID = tulosjoukko.getInt("asiakas_id");					
 					toimiID = tulosjoukko.getInt("toimipiste_id");
@@ -397,30 +412,28 @@ public class Kanta {
 			// JDBC virheet
 			e.printStackTrace();
 		}
-
+		//palautetaan varausolio
 		return varausolio;
 	}//haetaanVaraus
 
+	//Päivitetään varausta
 	public int paivitaVaraus(int varausID, Date alotus, Date lopetus){
 		int lkm = 0;
 		int onnistuiko = 2;
+		//Luodaan päivitys lause
 		String sql = "UPDATE Varaus "
-		//+ "(asiakas_id, toimipiste_id , mokki_id , varattu_pvm , vahvistus_pvm, varattu_alkupvm, varattu_loppupvm) "
-		//+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		
 		+ "SET asiakas_id = ?, toimipiste_id = ?, mokki_id = ?, varattu_alkupvm = ?, varattu_loppupvm = ?"
 		+ " WHERE varaus_id = ?";
 		
 		PreparedStatement lause = null;
 		//tarkistetaan että kaikilla tiedoilla on arvo
-		System.out.println("täällä"+(asiakasID != 0 && toimiID != 0 &&mokkiID != 0));
 		if(asiakasID != 0 && toimiID != 0 &&mokkiID != 0){
 		onnistuiko = 1;	
 		varaus = varausID;
 		try {
 			// luo PreparedStatement-olio sql-lauseelle
 			lause = conn.prepareStatement(sql);
-			// laitetaan arvot INSERTtiin
+			// laitetaan arvot Updateen
 
 			lause.setInt( 1, asiakasID);
 			lause.setInt(2, toimiID); 
@@ -449,8 +462,9 @@ public class Kanta {
 		return onnistuiko;
 	}
 	
+	//Poistetaan varaus
 	public boolean poistaVaraus(int varattu){
-		String sql = "DELETE FROM Varaus WHERE varaus_id = ?";
+		String sql = "DELETE FROM Varaus WHERE varaus_id = ?"; //Luodaan sql lause
 		PreparedStatement lause = null;
 		boolean poisto = false;
 		try {
@@ -478,7 +492,7 @@ public class Kanta {
 	}
 	
 	
-	
+	//Asetetaan liput nollaksi
 	public void asiakaslippu(){
 		asiakasID = 0;
 	}
@@ -487,6 +501,45 @@ public class Kanta {
 	}
 	public void mokkilippu(){
 		mokkiID = 0;
+	}
+
+	//Haetaan palvelut
+	public ArrayList<String> haePalvelut(int id){
+		//Luodaan arraylist, jolla palautetaan varauksen palvelut
+		ArrayList<String> tulokset = new ArrayList<String>();
+		ResultSet tulosjoukko = null;
+		PreparedStatement lause = null;
+		tulokset.add(0, "5");
+		try {
+			// luo PreparedStatement-olio sql-lauseelle
+			String sql = "SELECT palvelu_id " 
+					+ " FROM Varauksen_palvelut WHERE varaus_id = ?"; // ehdon arvo asetetaan jäljempänä
+			
+			lause = conn.prepareStatement(sql);
+			lause.setInt( 1, id); 
+
+
+			// suorita sql-lause
+			tulosjoukko = lause.executeQuery();	
+				int i = 0;
+				//Käydään sql kyselyn tulokset lävitse ja lisätään ne arraylistaan
+				while(tulosjoukko.next () == true){
+					i++;
+					tulokset.add(i,""+tulosjoukko.getInt("palvelu_id"));
+					tulokset.set(0,"1");
+				}
+			
+		} catch (SQLException se) {
+			// SQL virheet
+			tulokset.set(0,"3");
+			se.printStackTrace();
+		} catch (Exception e) {
+			// JDBC virheet
+			tulokset.set(0,"2");
+			e.printStackTrace();
+		}
+
+		return tulokset;
 	}
 	
 }//end JDBCExample
