@@ -80,717 +80,653 @@ import javax.swing.JOptionPane;
     this.vbox = vbox;  
     this.m_conn = m_conn;
 
-   
 
 
 
-        //window.setTitle("Asiakas hallinta");
-
-      
-
-
-
-       //StackPane layout = new StackPane();
-
-
-
-       
-
-       
-
-
-
-        //paasivu = new Scene(paneelivaraus,400,400);
-
-
-
-
-
-				btnRight = new Button("Hae");
-				
-				btnRight.setOnAction(e -> hae_tiedot());
-
-        btnRight.setPadding(new Insets(30, 30, 30, 30));
-
-        btnRight.setMaxWidth(120);
-
-        BorderPane.setMargin(btnRight, new Insets(100, 100, 0, 100));
-
-
-
-				btnRight2 = new Button("Muuta");
-				
-				btnRight2.setOnAction(e -> muuta_tiedot());
-
-        btnRight2.setPadding(new Insets(30, 30, 30, 30));
-
-        btnRight2.setMaxWidth(120);
-
-        BorderPane.setMargin(btnRight2, new Insets(30, 100, 100, 100));
-
-
-
-        btnRight3 = new Button("Lisaa");
-
-				btnRight3.setPadding(new Insets(30, 30, 30, 30));
-				
-				btnRight3.setOnAction(e -> lisaa_tiedot());
-
-        btnRight3.setMaxWidth(120);
-
-        BorderPane.setMargin(btnRight3, new Insets(30, 100, 100, 100));
-
-
-
-				btnRight4 = new Button("Poista");
-				
-				btnRight4.setOnAction(e -> poista_tiedot());
-
-        btnRight4.setPadding(new Insets(30,30, 30,30));
-
-        btnRight4.setMaxWidth(120);
-
-        BorderPane.setMargin(btnRight4, new Insets(30, 100, 100, 100));
-
-
-
-				btnRight5 = new Button("Tyhjenna");
-				
-				btnRight5.setOnAction((e) ->{ 
-					
-				textfield.setText("");
-
-				textfield2.setText("");
-	
-				textfield3.setText("");
-	
-				textfield4.setText("");
-	
-				textfield5.setText("");
-	
-				textfield6.setText("");
-	
-				textfield7.setText("");
-	
-				textfield8.setText(""); });
-	
-
-				btnRight5.setPadding(new Insets(30, 30, 30, 30));
-				
-				btnRight5.setMaxWidth(120);
-
-        BorderPane.setMargin(btnRight5, new Insets(30, 100, 100, 100)); 
-
-
-
-        
-
-
-
-
-
-        //vbox = new VBox();
-
-        
-        vbox.setPadding(new Insets(0,25,0,0));
-
-
-        HBox.setMargin(vbox, new Insets(0, 0, 0, 600));
-
-        vbox.getChildren().addAll(btnRight,btnRight2,btnRight3,btnRight4,btnRight5);
-
-
-
-       
-
-
-
-        paneelivaraus.setRight(vbox);
-
-
-
-        
-
-
-
-        
-
-        Btakaisin = new Button("takaisin");
-
-		
-
-        paneelivaraus.setBottom(Btakaisin);
-        Btakaisin.setOnAction(e -> window.setScene(paasivu));
-
-
-
-
-
-
-        
-
-         textfield = new TextField();
-
-       /* textfield.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-
-
-        textfield2 = new TextField();
-
-       /* textfield2.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield2, new Insets(10, 10, 10, 0));*/
-
-
-
-         textfield3 = new TextField();
-
-       /* textfield3.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-
-
-         textfield4 = new TextField();
-
-        /*textfield4.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-
-
-         textfield5 = new TextField();
-
-       /* textfield5.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-
-
-        textfield6 = new TextField();
-
-        /*textfield6.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-
-
-         textfield7 = new TextField();
-
-       /* textfield7.setPadding(new Insets(25, 25, 25,0));
-
-        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
-
-         textfield8 = new TextField();
-
-
-
-      
-
-        Label label1 = new Label("Asiakas_ID");
-
-
-
-        Label label2 = new Label("Etunimi");
-
-        Label label3 = new Label("Sukunimi");
-
-        Label label4 = new Label("lahiosoite");
-
-        Label label5 = new Label("Postinumero:");
-
-        Label label6 = new Label("Postitoimipaikka:");
-
-        Label label7 = new Label("Email:");
-
-
-
-        Label label8 = new Label("Puhelinnumero:");
-
-
-
-     
-
-
-
-
-
-
-
-
-
-        
-
-        VBox vbox2 = new VBox();
-
-        vbox2.setMaxHeight(5);
-        vbox2.setPadding(new Insets(0,0,0,25));
-
-
-
-
-        vbox2.getChildren().addAll(label1,textfield,label2,textfield2,label3,textfield3,label4,textfield4,label5,textfield5
-
-        ,label6,textfield6,label7,textfield7,label8,textfield8);
-
-
-
-        paneelivaraus.setLeft(vbox2);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
-
-
-
-      
-
-
-
-
-
-      //window.setScene(paasivu);
-
-      //window.show();
 
     
 
 
+  //tehdään napit ja toiminnot
 
 
+  				btnRight = new Button("Hae");
+  				
+  				btnRight.setOnAction(e -> hae_tiedot());
 
-		
+          btnRight.setPadding(new Insets(30, 30, 30, 30));
 
-		
+          btnRight.setMaxWidth(120);
 
-    }
+          BorderPane.setMargin(btnRight, new Insets(100, 100, 0, 100));
 
-   
 
 
-	/*
+  				btnRight2 = new Button("Muuta");
+  				
+  				btnRight2.setOnAction(e -> muuta_tiedot());
 
-	Haetaan tietokannasta asiakkaan tiedot näytöllä olevan opiskelijaid:n perusteella ja näytetään tiedot lomakkeella
+          btnRight2.setPadding(new Insets(30, 30, 30, 30));
 
-	*/
+          btnRight2.setMaxWidth(120);
 
-	public  void hae_tiedot() {
+          BorderPane.setMargin(btnRight2, new Insets(30, 100, 100, 100));
 
-		// haetaan tietokannasta opiskelijaa, jonka opiskelija_id = txtOpiskelijaID 
 
-		//m_asiakas = null;
 
-		
+          btnRight3 = new Button("Lisaa");
 
-		try {
+  				btnRight3.setPadding(new Insets(30, 30, 30, 30));
+  				
+  				btnRight3.setOnAction(e -> lisaa_tiedot());
 
-			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
+          btnRight3.setMaxWidth(120);
 
-		} catch (SQLException se) {
+          BorderPane.setMargin(btnRight3, new Insets(30, 100, 100, 100));
 
-		// SQL virheet
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-		} catch (Exception e) {
+  				btnRight4 = new Button("Poista");
+  				
+  				btnRight4.setOnAction(e -> poista_tiedot());
 
-		// muut virheet
+          btnRight4.setPadding(new Insets(30,30, 30,30));
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy."+e.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+          btnRight4.setMaxWidth(120);
 
-		}
+          BorderPane.setMargin(btnRight4, new Insets(30, 100, 100, 100));
 
-		if (m_asiakas.getEtunimi() == null) {
 
-		// muut virheet
 
-			textfield.setText("");
+  				btnRight5 = new Button("Tyhjenna");
+  				
+  				btnRight5.setOnAction((e) ->{ 
+  					
+  				textfield.setText("");
 
-			textfield2.setText("");
+  				textfield2.setText("");
+  	
+  				textfield3.setText("");
+  	
+  				textfield4.setText("");
+  	
+  				textfield5.setText("");
+  	
+  				textfield6.setText("");
+  	
+  				textfield7.setText("");
+  	
+  				textfield8.setText(""); });
+  	
 
-			textfield3.setText("");
+  				btnRight5.setPadding(new Insets(30, 30, 30, 30));
+  				
+  				btnRight5.setMaxWidth(120);
 
-			textfield4.setText("");
+          BorderPane.setMargin(btnRight5, new Insets(30, 100, 100, 100)); 
 
-			textfield5.setText("");
 
-			textfield6.setText("");
 
-      textfield7.setText("");
+          
 
-      textfield8.setText("");
+          
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
 
-		}
 
-		else
+          HBox.setMargin(vbox, new Insets(0, 0, 0, 600));
 
-		{
+          vbox.getChildren().addAll(btnRight,btnRight2,btnRight3,btnRight4,btnRight5);
 
-			// naytetaan tiedot
 
-			textfield2.setText(m_asiakas.getEtunimi());
 
-			textfield3.setText(m_asiakas.getSukunimi());
+         
 
-			textfield4.setText(m_asiakas.getLahiosoite());
 
-			textfield5.setText(m_asiakas.getPostinro());
 
-			textfield6.setText(m_asiakas.getPostitoimipaikka());
+          paneelivaraus.setRight(vbox);
 
-			textfield7.setText(m_asiakas.getEmail());
 
-			textfield8.setText(m_asiakas.getPuhelinnro());
 
-		}
+          
 
-		
 
-	}
 
-	/*
+          
 
-	Viedään näytöllä olevat tiedot opiskelijaoliolle ja kirjoitetaan ne tietokantaan
+          Btakaisin = new Button("takaisin");
 
-	*/
+          Btakaisin.setMaxWidth(100);
+          Btakaisin.setMaxHeight(30);
+          Btakaisin.setPadding(new Insets(5,5, 5,5));
+          paneelivaraus.setBottom(Btakaisin);
+          paneelivaraus.setPadding(new Insets(5,5, 5,5));
+          Btakaisin.setOnAction(e -> window.setScene(paasivu));
 
-	public  void lisaa_tiedot() {
 
-		// lisätään tietokantaan opiskelija
 
-		//System.out.println("Lisataan...");
 
-		boolean asiakas_lisatty = true;
 
-		//m_asiakas = null;
 
-		try {
+          //tehdään tekstikentät
 
-			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
+           textfield = new TextField();
 
-		} catch (SQLException se) {
+         /* textfield.setPadding(new Insets(25, 25, 25,0));
 
-		// SQL virheet
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-			asiakas_lisatty = false;
 
-			JOptionPane.showMessageDialog(null, "Tietokantavirhe."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-		} catch (Exception e) {
+          textfield2 = new TextField();
 
-		// muut virheet
+         /* textfield2.setPadding(new Insets(25, 25, 25,0));
 
-			asiakas_lisatty = false;
+          BorderPane.setMargin(textfield2, new Insets(10, 10, 10, 0));*/
 
-			JOptionPane.showMessageDialog(null, "Tietokantavirhe."+e.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-		}
 
-		if (m_asiakas.getEtunimi() != null) {
+           textfield3 = new TextField();
 
-		// opiskelija jo olemassa, näytetään tiedot
+         /* textfield3.setPadding(new Insets(25, 25, 25,0));
 
-			asiakas_lisatty = false;
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-			textfield2.setText(m_asiakas.getEtunimi());
 
-			textfield3.setText(m_asiakas.getSukunimi());
 
-			textfield4.setText(m_asiakas.getLahiosoite());
+           textfield4 = new TextField();
 
-			textfield5.setText(m_asiakas.getPostinro());
+          /*textfield4.setPadding(new Insets(25, 25, 25,0));
 
-			textfield6.setText(m_asiakas.getPostitoimipaikka());
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-			textfield7.setText(m_asiakas.getEmail());
 
-			textfield8.setText(m_asiakas.getPuhelinnro());
 
-			JOptionPane.showMessageDialog(null, "Asiakas on jo olemassa.", "Virhe", JOptionPane.ERROR_MESSAGE);
+           textfield5 = new TextField();
 
-		}
+         /* textfield5.setPadding(new Insets(25, 25, 25,0));
 
-		else
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-		{
 
-			// asetetaan tiedot oliolle
 
-			m_asiakas.setAsiakasId(Integer.parseInt(textfield.getText()));
+          textfield6 = new TextField();
 
-			m_asiakas.setEtunimi(textfield2.getText());
+          /*textfield6.setPadding(new Insets(25, 25, 25,0));
 
-			m_asiakas.setSukunimi(textfield3.getText());
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-			m_asiakas.setLahiosoite(textfield4.getText());
 
-			m_asiakas.setPostinro(textfield5.getText());
 
-			m_asiakas.setPostitoimipaikka(textfield6.getText());
+           textfield7 = new TextField();
 
-			m_asiakas.setEmail(textfield.getText());
+         /* textfield7.setPadding(new Insets(25, 25, 25,0));
 
-			m_asiakas.setPuhelinnro(textfield.getText());
+          BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-			try {
+           textfield8 = new TextField();
 
-				// yritetään kirjoittaa kantaan
 
-				m_asiakas.lisaaAsiakas (m_conn);
 
-			} catch (SQLException se) {
+        //tehdään labelit
 
-			// SQL virheet
+          Label label1 = new Label("Asiakas_ID");
 
-				asiakas_lisatty = false;
 
-				JOptionPane.showMessageDialog(null, "Asiakkaan lisaaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-				 se.printStackTrace();
+          Label label2 = new Label("Etunimi");
 
-			} catch (Exception e) {
+          Label label3 = new Label("Sukunimi");
 
-			// muut virheet
+          Label label4 = new Label("lahiosoite");
 
-				asiakas_lisatty = false;
+          Label label5 = new Label("Postinumero:");
 
-				JOptionPane.showMessageDialog(null, "Asiakkaan lisaaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+          Label label6 = new Label("Postitoimipaikka:");
 
-				 e.printStackTrace();
+          Label label7 = new Label("Email:");
 
-			}finally {
 
-				if (asiakas_lisatty == true)
 
-					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot lisatty tietokantaan.");
+          Label label8 = new Label("Puhelinnumero:");
 
-			}
 
-		
+          
 
-		}
+          VBox vbox2 = new VBox();
 
-		
+          vbox2.setMaxHeight(5);
 
-	}
 
-	/*
 
-	Viedään näytöllä olevat tiedot opiskelijaoliolle ja muutetaan ne tietokantaan
 
-	*/
 
-	public  void muuta_tiedot() {
+          vbox2.getChildren().addAll(label1,textfield,label2,textfield2,label3,textfield3,label4,textfield4,label5,textfield5
 
-		//System.out.println("Muutetaan...");
+          ,label6,textfield6,label7,textfield7,label8,textfield8);
 
-			boolean asiakas_muutettu = true;
 
-		// asetetaan tiedot oliolle
 
-		m_asiakas.setEtunimi(textfield2.getText());
+          paneelivaraus.setLeft(vbox2);
+          
+          vbox2.setPadding(new Insets(0,0,0,25));
+          vbox.setPadding(new Insets(0,25,0,0));
+          
 
-			m_asiakas.setSukunimi(textfield3.getText());
+      }
 
-			m_asiakas.setLahiosoite(textfield4.getText());
+      
 
-			m_asiakas.setPostinro(textfield5.getText());
 
-			m_asiakas.setPostitoimipaikka(textfield6.getText());
 
-			m_asiakas.setEmail(textfield7.getText());
+  	/*
 
-			m_asiakas.setPuhelinnro(textfield8.getText());
+  	Haetaan tietokannasta asiakkaan tiedot näytöllä olevan asiakasid:n perusteella ja näytetään tiedot lomakkeella
 
-			try {
+  	*/
 
-				// yritetään muuttaa (UPDATE) tiedot kantaan
+  	public  void hae_tiedot() {
 
-				m_asiakas.muutaAsiakas (m_conn);
+  		// haetaan tietokannasta asiakas, jonka asiakas_id = textfield
 
-			} catch (SQLException se) {
+  		m_asiakas = null;
 
-			// SQL virheet
+  		
 
-				asiakas_muutettu = false;
+  		try {
 
-				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen muuttaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+  			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
 
-				 //se.printStackTrace();
+  		} catch (SQLException se) {
 
-			} catch (Exception e) {
+  		// SQL virheet
 
-			// muut virheet
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-				asiakas_muutettu = false;
+  		} catch (Exception e) {
 
-				JOptionPane.showMessageDialog(null, "asiakkaan tietojen muuttaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+  		// muut virheet
 
-				// e.printStackTrace();
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy."+e.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-			} finally {
+  		}
 
-				if (asiakas_muutettu == true)
+  		if (m_asiakas.getEtunimi() == null) {
 
-					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot muutettu.");
+  		// muut virheet
 
-			}
+  			textfield.setText("");
 
-		
+  			textfield2.setText("");
 
-	}
+  			textfield3.setText("");
 
-	public  void poista_tiedot() {
+  			textfield4.setText("");
 
-		// haetaan tietokannasta opiskelijaa, jonka opiskelija_id = txtOpiskelijaID 
+  			textfield5.setText("");
 
-		m_asiakas = null;
+  			textfield6.setText("");
 
-		boolean asiakas_poistettu = false;
+        textfield7.setText("");
 
-		
+        textfield8.setText("");
 
-		try {
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
 
-			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
+  		}
 
-		} catch (SQLException se) {
+  		else
 
-		// SQL virheet
+  		{
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+  			// naytetaan tiedot
 
-		} catch (Exception e) {
+  			textfield2.setText(m_asiakas.getEtunimi());
 
-		// muut virheet
+  			textfield3.setText(m_asiakas.getSukunimi());
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+  			textfield4.setText(m_asiakas.getLahiosoite());
 
-		}
+  			textfield5.setText(m_asiakas.getPostinro());
 
-		if (m_asiakas.getEtunimi() == null) {
+  			textfield6.setText(m_asiakas.getPostitoimipaikka());
 
-		// poistettavaa opiskelijaa ei löydy tietokannasta, tyhjennetään tiedot näytöltä
+  			textfield7.setText(m_asiakas.getEmail());
 
-			textfield.setText("");
+  			textfield8.setText(m_asiakas.getPuhelinnro());
 
-			textfield2.setText("");
+  		}
 
-			textfield3.setText("");
+  		
 
-			textfield4.setText("");
+  	}
 
-			textfield5.setText("");
+  	/*
 
-			textfield6.setText("");
+  	Viedään näytöllä olevat tiedot ooliolle ja kirjoitetaan ne tietokantaan
 
-      textfield7.setText("");
+  	*/
 
-      textfield8.setText("");
+  	public  void lisaa_tiedot() {
 
-			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
+  		// lisätään tietokantaan asiakas
 
-			return; // poistutaan
+  		
 
-		}
+  		boolean asiakas_lisatty = true;
 
-		else
+  		m_asiakas = null;
 
-		{
+  		try {
 
-			// naytetaan poistettavan asiakkaan tiedot
+  			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
 
-			textfield2.setText(m_asiakas.getEtunimi());
+  		} catch (SQLException se) {
 
-			textfield3.setText(m_asiakas.getSukunimi());
+  		// SQL virheet
 
-			textfield4.setText(m_asiakas.getLahiosoite());
+  			asiakas_lisatty = false;
 
-			textfield5.setText(m_asiakas.getPostinro());
+  			JOptionPane.showMessageDialog(null, "Tietokantavirhe."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-			textfield6.setText(m_asiakas.getPostitoimipaikka());
+  		} catch (Exception e) {
 
-			textfield7.setText(m_asiakas.getEmail());
+  		// muut virheet
 
-			textfield8.setText(m_asiakas.getPuhelinnro());
+  			asiakas_lisatty = false;
 
-		}
+  			JOptionPane.showMessageDialog(null, "Tietokantavirhe."+e.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-		try {
+  		}
 
-			if (JOptionPane.showConfirmDialog(null, "Haluatko todella poistaa asiakkaan?")==0) {// vahvistus ikkunassa
+  		if (m_asiakas.getEtunimi() != null) {
 
-				m_asiakas.poistaAsiakas (m_conn);
+  		// asiakas jo olemassa, näytetään tiedot
 
-				asiakas_poistettu = true;
+  			asiakas_lisatty = false;
 
-			}
+  			textfield2.setText(m_asiakas.getEtunimi());
 
-			} catch (SQLException se) {
+  			textfield3.setText(m_asiakas.getSukunimi());
 
-			// SQL virheet
+  			textfield4.setText(m_asiakas.getLahiosoite());
 
-				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen poistaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+  			textfield5.setText(m_asiakas.getPostinro());
 
-				// se.printStackTrace();
+  			textfield6.setText(m_asiakas.getPostitoimipaikka());
 
-			} catch (Exception e) {
+  			textfield7.setText(m_asiakas.getEmail());
 
-			// muut virheet
+  			textfield8.setText(m_asiakas.getPuhelinnro());
 
-				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen poistaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+  			JOptionPane.showMessageDialog(null, "Asiakas on jo olemassa.", "Virhe", JOptionPane.ERROR_MESSAGE);
 
-				// e.printStackTrace();
+  		}
 
-			} finally {
+  		else
 
-				if (asiakas_poistettu == true) { // ainoastaan, jos vahvistettiin ja poisto onnistui
+  		{
 
-					textfield.setText("");
+  			// asetetaan tiedot oliolle
 
-					textfield2.setText("");
+  			m_asiakas.setAsiakasId(Integer.parseInt(textfield.getText()));
 
-					textfield3.setText("");
+  			m_asiakas.setEtunimi(textfield2.getText());
 
-					textfield4.setText("");
+  			m_asiakas.setSukunimi(textfield3.getText());
 
-					textfield5.setText("");
+  			m_asiakas.setLahiosoite(textfield4.getText());
 
-					textfield6.setText("");
+  			m_asiakas.setPostinro(textfield5.getText());
 
-					textfield7.setText("");
+  			m_asiakas.setPostitoimipaikka(textfield6.getText());
 
-					textfield8.setText("");
+  			m_asiakas.setEmail(textfield.getText());
 
-					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot poistettu tietokannasta.");
+  			m_asiakas.setPuhelinnro(textfield.getText());
 
-					m_asiakas = null;
+  			try {
 
-				}
+  				// yritetään kirjoittaa kantaan
 
-			}
+  				m_asiakas.lisaaAsiakas (m_conn);
 
-			
+  			} catch (SQLException se) {
 
-		
+  			// SQL virheet
 
-	}
-	}
-    
+  				asiakas_lisatty = false;
+
+  				JOptionPane.showMessageDialog(null, "Asiakkaan lisaaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+  				 se.printStackTrace();
+
+  			} catch (Exception e) {
+
+  			// muut virheet
+
+  				asiakas_lisatty = false;
+
+  				JOptionPane.showMessageDialog(null, "Asiakkaan lisaaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+  				 e.printStackTrace();
+
+  			}finally {
+
+  				if (asiakas_lisatty == true)
+
+  					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot lisatty tietokantaan.");
+
+  			}
+
+  		
+
+  		}
+
+  		
+
+  	}
+
+  	/*
+
+  	Viedään näytöllä olevat tiedot oliolle ja muutetaan ne tietokantaan
+
+  	*/
+
+  	public  void muuta_tiedot() {
+
+  		
+
+  			boolean asiakas_muutettu = true;
+
+  		// asetetaan tiedot oliolle
+
+  		m_asiakas.setEtunimi(textfield2.getText());
+
+  			m_asiakas.setSukunimi(textfield3.getText());
+
+  			m_asiakas.setLahiosoite(textfield4.getText());
+
+  			m_asiakas.setPostinro(textfield5.getText());
+
+  			m_asiakas.setPostitoimipaikka(textfield6.getText());
+
+  			m_asiakas.setEmail(textfield7.getText());
+
+  			m_asiakas.setPuhelinnro(textfield8.getText());
+
+  			try {
+
+  				// yritetään muuttaa (UPDATE) tiedot kantaan
+
+  				m_asiakas.muutaAsiakas (m_conn);
+
+  			} catch (SQLException se) {
+
+  			// SQL virheet
+
+  				asiakas_muutettu = false;
+
+  				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen muuttaminen ei onnistu."+ se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+  				 //se.printStackTrace();
+
+  			} catch (Exception e) {
+
+  			// muut virheet
+
+  				asiakas_muutettu = false;
+
+  				JOptionPane.showMessageDialog(null, "asiakkaan tietojen muuttaminen ei onnistu."+e.getMessage(), "Virhe", JOptionPane.ERROR_MESSAGE);
+
+  				// e.printStackTrace();
+
+  			} finally {
+
+  				if (asiakas_muutettu == true)
+
+  					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot muutettu.");
+
+  			}
+
+  		
+
+  	}
+
+  	public  void poista_tiedot() {
+
+  		// haetaan tietokannasta asiakasta, jonka asiakas_id = textfield 
+
+  		m_asiakas = null;
+
+  		boolean asiakas_poistettu = false;
+
+  		
+
+  		try {
+
+  			m_asiakas = Asiakas.haeAsiakas (m_conn, Integer.parseInt(textfield.getText()));
+
+  		} catch (SQLException se) {
+
+  		// SQL virheet
+
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+  		} catch (Exception e) {
+
+  		// muut virheet
+
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+  		}
+
+  		if (m_asiakas.getEtunimi() == null) {
+
+  		// poistettavaa asiakasta ei löydy tietokannasta, tyhjennetään tiedot näytöltä
+
+  			textfield.setText("");
+
+  			textfield2.setText("");
+
+  			textfield3.setText("");
+
+  			textfield4.setText("");
+
+  			textfield5.setText("");
+
+  			textfield6.setText("");
+
+        textfield7.setText("");
+
+        textfield8.setText("");
+
+  			JOptionPane.showMessageDialog(null, "Asiakasta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+  			return; // poistutaan
+
+  		}
+
+  		else
+
+  		{
+
+  			// naytetaan poistettavan asiakkaan tiedot
+
+  			textfield2.setText(m_asiakas.getEtunimi());
+
+  			textfield3.setText(m_asiakas.getSukunimi());
+
+  			textfield4.setText(m_asiakas.getLahiosoite());
+
+  			textfield5.setText(m_asiakas.getPostinro());
+
+  			textfield6.setText(m_asiakas.getPostitoimipaikka());
+
+  			textfield7.setText(m_asiakas.getEmail());
+
+  			textfield8.setText(m_asiakas.getPuhelinnro());
+
+  		}
+
+  		try {
+
+  			if (JOptionPane.showConfirmDialog(null, "Haluatko todella poistaa asiakkaan?")==0) {// vahvistus ikkunassa
+
+  				m_asiakas.poistaAsiakas (m_conn);
+
+  				asiakas_poistettu = true;
+
+  			}
+
+  			} catch (SQLException se) {
+
+  			// SQL virheet
+
+  				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen poistaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+  				// se.printStackTrace();
+
+  			} catch (Exception e) {
+
+  			// muut virheet
+
+  				JOptionPane.showMessageDialog(null, "Asiakkaan tietojen poistaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+  				// e.printStackTrace();
+
+  			} finally {
+
+  				if (asiakas_poistettu == true) { // ainoastaan, jos vahvistettiin ja poisto onnistui
+
+  					textfield.setText("");
+
+  					textfield2.setText("");
+
+  					textfield3.setText("");
+
+  					textfield4.setText("");
+
+  					textfield5.setText("");
+
+  					textfield6.setText("");
+
+  					textfield7.setText("");
+
+  					textfield8.setText("");
+
+  					JOptionPane.showMessageDialog(null, "Asiakkaan tiedot poistettu tietokannasta.");
+
+  					m_asiakas = null;
+
+  				}
+
+  			}
+
+  			
+
+  		
+
+  	}
+  	}
+      
 

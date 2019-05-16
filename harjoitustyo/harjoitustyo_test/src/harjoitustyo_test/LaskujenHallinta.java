@@ -1,5 +1,4 @@
 package harjoitustyo_test;
-//package harjoitustyo_test;
 
 import javafx.application.Application;
 
@@ -30,7 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 import java.sql.*;
-
+import java.util.ArrayList;
 import java.awt.*;
 
 import java.awt.event.*;
@@ -54,7 +53,7 @@ public class LaskujenHallinta{
 
     BorderPane paneelivaraus;
 
-    Button Btakaisin,btnRight,btnRight2,btnRight3,btnRight4,btnRight5;
+    Button Btakaisin,btnRight,btnRight2,btnRight3,btnRight4,btnRight5,btnRight6, btnRight7;
 
     Label paaotsikko,joku;
 
@@ -69,10 +68,20 @@ public class LaskujenHallinta{
     StackPane stackPane;
 
 	HBox hbox;
+	
+		Lasku m_lasku = new Lasku();
 
-    Lasku m_lasku = new Lasku();
+		
+	
 
-    Connection m_conn;
+		Connection m_conn;
+
+		
+		haeTiedot m_tiedot;
+		
+
+
+		
 
   
 
@@ -80,7 +89,7 @@ public class LaskujenHallinta{
 
     
 
-    public LaskujenHallinta(BorderPane paneelivaraus, Stage window, Scene paasivu,VBox vbox){
+    public LaskujenHallinta(BorderPane paneelivaraus, Stage window, Scene paasivu,VBox vbox, Connection m_conn){
 
 		this.paneelivaraus = paneelivaraus;
 
@@ -88,27 +97,22 @@ public class LaskujenHallinta{
 
     this.paasivu = paasivu;
 
-    this.vbox = vbox;  
+		this.vbox = vbox;  
+		this.m_conn = m_conn;
 
-  //      VBox vbox = new VBox();
+		m_tiedot = new haeTiedot(m_conn);
 
-    //    vbox.setPrefWidth(90);
-
-
-
-
-
-      //  window.setTitle("Laskujen Hallinta");
+      
 
       
 
 
 
-      //  paasivu = new Scene(paneelivaraus,400,400);
+     
 
 
 
-
+// tehdään napit ja toiminnot
 
 		btnRight = new Button("Hae");
 
@@ -116,7 +120,7 @@ public class LaskujenHallinta{
 
         btnRight.setPadding(new Insets(25, 25, 25, 25));
 
-        btnRight.setMaxWidth(100);
+        btnRight.setMaxWidth(120);
 
         BorderPane.setMargin(btnRight, new Insets(100, 100, 100, 100));
 
@@ -130,7 +134,7 @@ public class LaskujenHallinta{
 
         btnRight2.setPadding(new Insets(25, 25, 25, 25));
 
-        btnRight2.setMaxWidth(100);
+        btnRight2.setMaxWidth(120);
 
         BorderPane.setMargin(btnRight2, new Insets (100,100, 100, 100));
 
@@ -144,7 +148,7 @@ public class LaskujenHallinta{
 
         btnRight3.setPadding(new Insets(25, 25, 25, 25));
 
-        btnRight3.setMaxWidth(100);
+        btnRight3.setMaxWidth(120);
 
         BorderPane.setMargin(btnRight3, new Insets(100, 100, 100, 100));
 
@@ -156,23 +160,68 @@ public class LaskujenHallinta{
 
         btnRight4.setPadding(new Insets(25,25, 25,25));
 
-        btnRight4.setMaxWidth(100);
+        btnRight4.setMaxWidth(120);
 
         BorderPane.setMargin(btnRight4, new Insets(100, 100, 100, 100));
 
 
 
-         btnRight5 = new Button("Laheta");
+		 btnRight5 = new Button("Tyhjenna");
+		 
+		 btnRight5.setOnAction((e) ->{ 
+					
+			textfield.setText("");
+
+			textfield2.setText("");
+
+			textfield3.setText("");
+
+			textfield4.setText("");
+
+			textfield5.setText("");
+
+			textfield6.setText("");
+
+			textfield7.setText("");
+
+			textfield8.setText("");
+
+		    textfield9.setText(""); });
 
         btnRight5.setPadding(new Insets(25, 25, 25, 25));
 
-        btnRight5.setMaxWidth(100);
+        btnRight5.setMaxWidth(120);
 
-        BorderPane.setMargin(btnRight5, new Insets(100, 100, 100, 100));
+				BorderPane.setMargin(btnRight5, new Insets(100, 100, 100, 100));
+				
 
+				
+				btnRight6 = new Button("Hae tiedot");
 
+        btnRight6.setOnAction(e -> hae_tiedot2());
 
-        vbox.getChildren().addAll(btnRight,btnRight2,btnRight3,btnRight4,btnRight5);
+        btnRight6.setPadding(new Insets(25,25, 25,25));
+
+        btnRight6.setMaxWidth(120);
+
+        BorderPane.setMargin(btnRight4, new Insets(100, 100, 100, 100));
+
+        
+        
+		btnRight7 = new Button("Lähetä lasku");
+
+        //btnRight7.setOnAction(e -> hae_tiedot2());
+
+        btnRight7.setPadding(new Insets(25,25, 25,25));
+
+        btnRight7.setMaxWidth(120);
+
+        BorderPane.setMargin(btnRight7, new Insets(100, 100, 100, 100));
+        
+
+//lisätään napit vboxiin
+
+        vbox.getChildren().addAll(btnRight,btnRight2,btnRight3,btnRight4,btnRight5,btnRight6,btnRight7);
 
 
 
@@ -189,17 +238,19 @@ public class LaskujenHallinta{
         
 
         Btakaisin = new Button("takaisin");
-        
-		
-
-        paneelivaraus.setBottom(Btakaisin);
+        Btakaisin.setMaxWidth(100);
+        Btakaisin.setMaxHeight(60);
+        Btakaisin.setPadding(new Insets(5,5, 5,5));
+				paneelivaraus.setBottom(Btakaisin);
+				paneelivaraus.setPadding(new Insets(0,5, 15,5));
+				// nappi joka vie takaisin pääsivulle
         Btakaisin.setOnAction(e -> window.setScene(paasivu));
 
 
 
 
 
-
+//tehdään tekstikentät
         
 
          textfield = new TextField();
@@ -276,7 +327,7 @@ public class LaskujenHallinta{
 
         BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
 
-
+//tehdään labelit tekstikenttiin
 
         Label label1 = new Label("Lasku_ID");
 
@@ -324,115 +375,131 @@ public class LaskujenHallinta{
 
         paneelivaraus.setLeft(vbox2);
 
+        vbox2.setPadding(new Insets(0,0,0,25));
+        vbox.setPadding(new Insets(0,25,0,0));
 
 
 
 
 
-
-      // avataan tietokanta
-
-		try {
-
-			yhdista ();
-
-		 } catch (SQLException se) {
-
-            // SQL virheet
-
-			JOptionPane.showMessageDialog(null, "Tapahtui virhe tietokantaa avattaessa." +se.getMessage() , "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
-
-        } catch (Exception e) {
-
-            // JDBC virheet
-
-            JOptionPane.showMessageDialog(null, "Tapahtui JDBCvirhe tietokantaa avattaessa.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
-
-		}
 
 		
 
     }
 
-	
 
 
-
-	/*
-
-	Avataan tietokantayhteys
-
-	*/
-
-	public  void yhdista() throws SQLException, Exception {
-
-		m_conn = null;
-
-		String url = "jdbc:mariadb://localhost:3306/vp"; // palvelin = localhost, :portti annettu asennettaessa, tietokannan nimi
+// haetaan asiakkaan tiedot varaus_idn avulla ilman että laskua on tehty
+	public void hae_tiedot2(){
+		int varausid = 0;
+		ArrayList<String> palautus = new ArrayList<String>();
 
 		try {
-
-			// ota yhteys kantaan, kayttaja = root, salasana = root
-
-			m_conn=DriverManager.getConnection(url,"root","Jiklaaee870");
-
-		}
-
-		catch (SQLException e) { // tietokantaan ei saada yhteyttä
-
-			m_conn = null;
-
-			throw e;
-
-		}
-
-		catch (Exception e ) { // JDBC ajuria ei löydy
-
-			throw e;
-
-		}
-
+			varausid = Integer.parseInt(textfield2.getText());
 		
 
-	}
+//haku
+palautus = m_tiedot.haetaanAsiakas (varausid);
+
+} catch (Exception se) {  JOptionPane.showMessageDialog(null, "Varausta ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
 	
+}
 	
-	/*
 
-	Suljetaan tietokantayhteys
 
-	*/
 
-	public  void sulje_kanta() throws SQLException, Exception {
+//katotaan onnistuiko haku
 
-		// suljetaan		
+if(palautus.isEmpty()==false){
 
-		try {
 
-			// sulje yhteys kantaan
 
-			m_conn.close ();
+String asiakas_id= palautus.get(0);
 
-		}
+String etunimi= palautus.get(1);
 
-		catch (SQLException e) { // tietokantavirhe
+String sukunimi= palautus.get(2);
 
-			throw e;
+String lahiosoite= palautus.get(3);
 
-		}
+String postitoimipaikka= palautus.get(4);
 
-		catch (Exception e ) { // muu virhe tapahtui
+String postinro= palautus.get(5);
 
-			throw e;
 
-		}
 
-		
+textfield3.setText(asiakas_id);
 
-	}
+textfield4.setText(etunimi +" "+sukunimi);
+
+textfield5.setText(lahiosoite);
+
+textfield6.setText(postitoimipaikka);
+
+			textfield7.setText(postinro);
+
+			//haku
+			 double summa = m_tiedot.haetaanHinta (varausid);
+			textfield8.setText(""+summa);
+			textfield9.setText(""+m_tiedot.getAlv());
+			
+			
+
+}else{ 
+	textfield.setText("");
+
+	textfield2.setText("");
+
+	textfield3.setText("");
+
+	textfield4.setText("");
+
+	textfield5.setText("");
+
+				textfield6.setText("");
+
+				textfield7.setText("");
+
+				textfield8.setText("");
+
+	textfield9.setText(""); 
+
+	JOptionPane.showMessageDialog(null, "varausta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE); 
+
 
 	
+}
+
+
+//ilmoita käyttäjälle ei onnistunnut 
+
+}
+	
+// haetaan summa
+public void hae_tiedot3(){
+
+	//ArrayList<String> palautus = new ArrayList<String>();
+
+	
+
+
+
+
+
+
+//katotaan onnistuiko haku
+
+
+			
+
+
+
+
+//ilmoita käyttäjälle ei onnistunnut 
+
+}
+
 
 	/*
 
@@ -526,19 +593,19 @@ public class LaskujenHallinta{
 
 	/*
 
-	Viedään näytöllä olevat tiedot opiskelijaoliolle ja kirjoitetaan ne tietokantaan
+	Viedään näytöllä olevat tiedot oliolle ja kirjoitetaan ne tietokantaan
 
 	*/
 
 	public  void lisaa_tiedot() {
 
-		// lisätään tietokantaan opiskelija
+		// lisätään tietokantaan lasku
 
-		//System.out.println("Lisataan...");
+		
 
 		boolean lasku_lisatty = true;
 
-		//m_lasku = null;
+		
 
 		try {
 
@@ -561,18 +628,15 @@ public class LaskujenHallinta{
 			JOptionPane.showMessageDialog(null, "Tietokantavirhe.", "Tietokantavirhe"+e.getMessage(), JOptionPane.ERROR_MESSAGE);
 
 		}
-		System.out.print("täällä");
-		//Lasku m_lasku = new Lasku();
-		System.out.print(m_lasku.getVarausId()+"");
-		System.out.print("täällä");
+
 		if (m_lasku.getVarausId() != 0) {
 
-		// opiskelija jo olemassa, näytetään tiedot
+		// lasku jo olemassa, näytetään tiedot
 
 			lasku_lisatty = false;
 
 			//textfield.setText(m_lasku.getLaskuId());
-			
+
 			textfield2.setText(""+m_lasku.getVarausId());
 
 			textfield3.setText(""+m_lasku.getAsiakasId());
@@ -598,9 +662,12 @@ public class LaskujenHallinta{
 		else
 
 		{
-			
+
 			// asetetaan tiedot oliolle
-			
+
+			try {
+	
+
 			m_lasku.setLaskuId(Integer.parseInt(textfield.getText()));
 
             m_lasku.setVarausId(Integer.parseInt(textfield2.getText()));
@@ -621,6 +688,15 @@ public class LaskujenHallinta{
 
 			m_lasku.setAlv(Double.parseDouble(textfield9.getText()));
 
+		} catch (NumberFormatException exception) {
+
+			JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+exception.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+				 exception.printStackTrace();
+
+			
+		}
+
 			try {
 
 				// yritetään kirjoittaa kantaan
@@ -633,9 +709,9 @@ public class LaskujenHallinta{
 
 				lasku_lisatty = false;
 
-				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
 
-			//	 se.printStackTrace();
+				 se.printStackTrace();
 
 			} catch (Exception e) {
 
@@ -643,9 +719,9 @@ public class LaskujenHallinta{
 
 				lasku_lisatty = false;
 
-				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+e.getMessage(), "Virhe", JOptionPane.ERROR_MESSAGE);
 
-			//	 e.printStackTrace();
+				 e.printStackTrace();
 
 			}finally {
 
@@ -663,29 +739,24 @@ public class LaskujenHallinta{
 
 	}
 
-	
-	
-	
-	
-	
-	
 	/*
 
-	Viedään näytöllä olevat tiedot opiskelijaoliolle ja muutetaan ne tietokantaan
+	Viedään näytöllä olevat tiedot oliolle ja muutetaan ne tietokantaan
 
 	*/
 
 	public  void muuta_tiedot() {
 
-		//System.out.println("Muutetaan...");
+		
 
 			boolean lasku_muutettu = true;
 
 		// asetetaan tiedot oliolle
 
         //m_lasku.setLaskuId(Integer.parseInt(textfield.getText()));
-
-        m_lasku.setVarausId(Integer.parseInt(textfield2.getText()));
+try {
+	
+       m_lasku.setVarausId(Integer.parseInt(textfield2.getText()));
 
         m_lasku.setAsiakasId(Integer.parseInt(textfield3.getText()));
 
@@ -701,7 +772,14 @@ public class LaskujenHallinta{
 
         
 
-        m_lasku.setAlv(Double.parseDouble(textfield9.getText()));
+		m_lasku.setAlv(Double.parseDouble(textfield9.getText()));
+	
+	} catch (NumberFormatException exception) {
+
+		JOptionPane.showMessageDialog(null, "Laskun tietojen muuttaminen ei onnistu."+exception.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+		
+	}
+	 
 
 			
 
@@ -745,7 +823,7 @@ public class LaskujenHallinta{
 
 	public  void poista_tiedot() {
 
-		// haetaan tietokannasta opiskelijaa, jonka opiskelija_id = txtOpiskelijaID 
+		// haetaan tietokannasta laskua, jonka lasku_id = textfield 
 
 		m_lasku = null;
 
@@ -773,7 +851,7 @@ public class LaskujenHallinta{
 
 		if (m_lasku.getLaskuId() == 0) {
 
-		// poistettavaa opiskelijaa ei löydy tietokannasta, tyhjennetään tiedot näytöltä
+		// poistettavaa laskua ei löydy tietokannasta, tyhjennetään tiedot näytöltä
 
 		textfield.setText("");
 
@@ -888,5 +966,7 @@ public class LaskujenHallinta{
 	
 	
 	}
+
+    
 
     

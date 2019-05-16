@@ -77,7 +77,7 @@ public class Asiakas {
 	Staattinen metodi, ei vaadi fyysisen olion olemassaoloa.
 	*/
 	public static Asiakas haeAsiakas (Connection connection, int Aid) throws SQLException, Exception { // tietokantayhteys välitetään parametrina
-		// haetaan tietokannasta opiskelijaaa, jonka opiskelija_id = id 
+		// haetaan tietokannasta asiakasta, jonka asiakas_id = Aid 
 		String sql = "SELECT asiakas_id, etunimi, sukunimi, lahiosoite, postitoimipaikka, postinro, email, puhelinnro " 
 					+ " FROM asiakas WHERE asiakas_id = ?"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
@@ -98,12 +98,12 @@ public class Asiakas {
             // JDBC virheet
                         throw e;
 		}
-		// käsitellään resultset - laitetaan tiedot Opiskelijaoliolle
+		// käsitellään resultset - laitetaan tiedot oliolle
 		Asiakas AsiakasOlio = new Asiakas ();
 		
 		try {
 			if (tulosjoukko.next () == true){
-				//Opiskelija_id, etunimi, sukunimi, lahiosoite, postitoimipaikka, postinro, email, puhelinnro
+				//asiakas_id, etunimi, sukunimi, lahiosoite, postitoimipaikka, postinro, email, puhelinnro
 				AsiakasOlio.setAsiakasId (tulosjoukko.getInt("asiakas_id"));
 				AsiakasOlio.setEtunimi (tulosjoukko.getString("etunimi"));
 				AsiakasOlio.setSukunimi(tulosjoukko.getString("sukunimi"));
@@ -117,16 +117,16 @@ public class Asiakas {
 		}catch (SQLException e) {
 			throw e;
 		}
-		// palautetaan Opiskelijaolio
+		// palautetaan olio
 		
 		return AsiakasOlio;
 	}
 	/*
-	Lisätään opiskelijan tiedot tietokantaan.
-	Metodissa "Opiskelijaolio kirjoittaa tietonsa tietokantaan".
+	Lisätään asiakkaan tiedot tietokantaan.
+	Metodissa "Asiakasolio kirjoittaa tietonsa tietokantaan".
 	*/
      public int lisaaAsiakas (Connection connection) throws SQLException, Exception { // tietokantayhteys välitetään parametrina
-		// haetaan tietokannasta Opiskelijata, jonka Opiskelija_id = olion id -> ei voi lisätä, jos on jo kannassa
+		// haetaan tietokannasta Asiakasta, jonka asiakas_id = olion id -> ei voi lisätä, jos on jo kannassa
 		String sql = "SELECT asiakas_id" 
 					+ " FROM asiakas WHERE asiakas_id = ?"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
@@ -138,7 +138,7 @@ public class Asiakas {
 			lause.setInt( 1, getAsiakasId()); // asetetaan where ehtoon (?) arvo, olion Opiskelijaid
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-			if (tulosjoukko.next () == true) { // Opiskelija loytyi
+			if (tulosjoukko.next () == true) { // asiakas loytyi
 				throw new Exception("Asiakas on jo olemassa");
 			}
 		} catch (SQLException se) {
@@ -183,10 +183,10 @@ public class Asiakas {
 	}
 	/*
 	Muutetaan asiakkaan tiedot tietokantaan id-tietoa (avain) lukuunottamatta. 
-	Metodissa "Opiskelijaolio muuttaa tietonsa tietokantaan".
+	Metodissa "Asiakasolio muuttaa tietonsa tietokantaan".
 	*/
     public int muutaAsiakas (Connection connection) throws SQLException, Exception { // tietokantayhteys välitetään parametrina
-		// haetaan tietokannasta opiskelijaa, jonka opiskelija_id = olion id, virhe, jos ei löydy
+		// haetaan tietokannasta asiakasta, jonka asiakas_id = olion id, virhe, jos ei löydy
 		String sql = "SELECT asiakas_id" 
 					+ " FROM asiakas WHERE asiakas_id = ?"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
@@ -197,7 +197,7 @@ public class Asiakas {
 			lause.setInt( 1, getAsiakasId()); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-			if (tulosjoukko.next () == false) { // Opiskelijata ei löytynyt
+			if (tulosjoukko.next () == false) { // asiaksta ei löytynyt
 				throw new Exception("Asiakasta ei loydy tietokannasta");
 			}
 		} catch (SQLException se) {
@@ -244,7 +244,7 @@ public class Asiakas {
 	}
 	/*
 	Poistetaan asiakkaan tiedot tietokannasta. 
-	Metodissa "Opiskelijaolio poistaa tietonsa tietokannasta".
+	Metodissa "Asiakasolio poistaa tietonsa tietokannasta".
 	*/
 	public int poistaAsiakas (Connection connection) throws SQLException, Exception { // tietokantayhteys välitetään parametrina
 		

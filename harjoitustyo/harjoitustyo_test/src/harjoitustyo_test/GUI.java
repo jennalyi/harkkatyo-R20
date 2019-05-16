@@ -77,7 +77,7 @@ public class GUI extends Application{
 		otsikkopaneeli.setAlignment(Pos.CENTER);
 		ekapaneeli.setTop(otsikkopaneeli);
 		ekapaneeli.setCenter(keskipaneeli);
-		keskipaneeli.getChildren().addAll(Bmokit,Bvaraus,Bpalveluthal, Basiakkaiden,Blaskut,Braportit);
+		keskipaneeli.getChildren().addAll(Bmokit,Bpalveluthal, Basiakkaiden,Bvaraus,Blaskut,Braportit);
 		keskipaneeli.setAlignment(Pos.TOP_CENTER);
 		
 
@@ -119,10 +119,10 @@ public class GUI extends Application{
 	//Luodaan laskuhallinta lomake
 	public void laskuhallinta(){
 		laskupaneeli = new BorderPane();
-		scenelasku = new Scene(laskupaneeli, 500, 500);
+		scenelasku = new Scene(laskupaneeli, 400, 500);
 		boxi = new VBox();
 		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
-		laskut = new LaskujenHallinta(laskupaneeli, window, scene, boxi);
+		laskut = new LaskujenHallinta(laskupaneeli, window, scene, boxi, conn);
 		//Asetetaan uusi scene stageen
 		window.setScene(scenelasku);
 

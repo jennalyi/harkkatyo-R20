@@ -252,6 +252,9 @@ public class VaraaMokki {
 			if(Tvaraus.getText().isEmpty()){
 				hintaselite.setText("Syötä varaus id");
 			}
+			else if(Tvaraus.getText().equals("0")){
+				hintaselite.setText("Varaus id ei voi olla 0");
+			}
 			//Jos havaitaan päälekkäisiä päiviä
 			else if(lippuvarattu){
 				hintaselite.setText("Päivät sisältävät \n jo varattuja päiviä");

@@ -21,10 +21,10 @@ public class haeTiedot {
 	public ArrayList<String> haetaanAsiakas(int id){
 		String sql = "SELECT asiakas_id,etunimi, sukunimi, lahiosoite, postitoimipaikka, postinro " 
 				+ " FROM Asiakas WHERE asiakas_id = "
-				+ "(select asiakas_id from Varaus where varaus_id = ?)"; // ehdon arvo asetetaan jäljempänä
+				+ " (select asiakas_id from Varaus where varaus_id = ?)"; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
-		String haku = null;
+		//String haku = null;
 		ArrayList<String> palautus = new ArrayList<String>();
 		try {
 			// luo PreparedStatement-olio sql-lauseelle
@@ -32,7 +32,7 @@ public class haeTiedot {
 			lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-			palautus.add("onnistui");
+			//palautus.add("onnistui");
 			//Jos löydetään tuloksia
 			if (tulosjoukko.next () == true){
 				palautus.add(""+tulosjoukko.getInt("asiakas_id"));
@@ -44,7 +44,7 @@ public class haeTiedot {
 				
 			//Jos asiakasta ei löydy palautetaan siitä tieto
 			}else{
-				palautus.set(0,"ei onnistunut");
+				//palautus.set(0,"ei onnistunut");
 				
 			}
 

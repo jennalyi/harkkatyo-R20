@@ -1,9 +1,17 @@
 package harjoitustyo_test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -25,7 +33,7 @@ import javafx.util.Callback;
 public class Raportit {
 	BorderPane paneeliraportit;
 	GridPane kaikki;
-	ChoiceBox raportti;
+	ChoiceBox<String> raportti;
 	Stage window;
 	Scene paasivu;
 	Label paaotsikko, Lchoiceselite, Ltulosta, Lonnistuiko, kalenterivihje, kalenterivihje2;
@@ -60,7 +68,7 @@ public class Raportit {
 		paneeliraportit.setBottom(Btakaisin);
 		paneeliraportit.setPadding(new Insets(0,0,10,10));
 		Btakaisin.setOnAction(e -> window.setScene(paasivu));
-
+		Btulosta.setOnAction(e -> luoRaportti());
 		
 
 		
@@ -68,12 +76,13 @@ public class Raportit {
 	
 	public void grafiikka(){
 		Lchoiceselite = new Label("Valitse raportti");
-		raportti = new ChoiceBox(FXCollections.observableArrayList(
-				"Majoitukset", "Lis‰palvelut"));
+		raportti = new ChoiceBox <String>();
+		raportti.getItems().addAll("Majoitukset", "Lis‰palvelut");
+		
 		Ltulosta = new Label("Toimipisteen tunnus");
 		Ttulosta = new TextField();
 		Btulosta = new Button("Tulosta raportti");
-		
+		Lonnistuiko = new Label();
 		
 		kaikki.add(Lchoiceselite, 0, 0);
 		kaikki.add(raportti, 0, 1);
@@ -125,6 +134,11 @@ public class Raportit {
 	}
 	public void luoRaportti(){
 		toimipiste_id = 0;
+		RaporttiKanta raporttiOlio = new RaporttiKanta(conn);
+		haeTiedot hintahaku = new haeTiedot(conn);
+		ArrayList<Integer> toimipisteet = new ArrayList<Integer>();
+		ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
+		//ArrayList<String> varaus = new ArrayList<String>();
 		try{
 			toimipiste_id = Integer.parseInt(Ttulosta.getText());
 		}catch (NumberFormatException exception){
@@ -133,7 +147,89 @@ public class Raportit {
 		Date alotus = Date.valueOf(aloituspaiva.getValue());
 		Date lopetus = Date.valueOf(lopetuspaiva.getValue());
 		
-		if(raportti.getValue().equals("Majoitukset")){
+		
+		
+
+
+		
+		
+		for(int m =0; m<5;m++){
+
+		}
+		
+		
+
+		
+		
+		
+
+		
+		
+		toimipisteet = raporttiOlio.haetaanToimipisteet();
+		
+		try {
+			XWPFDocument document = new XWPFDocument();
+			FileOutputStream out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/test.docx"));
+			
+			XWPFParagraph paragraph = document.createParagraph();
+			XWPFRun run = paragraph.createRun();
+			run.setText("Toimipiste                                Asiakas                                Pvm                                Summa");
+		for(int i =0; i<toimipisteet.size();i++){
+			System.out.println(toimipisteet.get(i));
+			kaikkiVaraukset = raporttiOlio.haetaanVaraus(toimipisteet.get(i), alotus, lopetus);
+			
+			
+			if(kaikkiVaraukset.size()>0){
+
+			
+			
+			 paragraph = document.createParagraph();
+			 run = paragraph.createRun();
+			String toimipiste = kaikkiVaraukset.get(0).get(4);
+			run.setText(toimipiste);
+			System.out.println("\n\n t‰‰ll‰");
+			}
+			
+			for(int t=0; t<kaikkiVaraukset.size(); t++){
+				
+				
+					int varausid = Integer.parseInt(kaikkiVaraukset.get(t).get(0));
+					String paiva = kaikkiVaraukset.get(t).get(1);
+					String etunimi = kaikkiVaraukset.get(t).get(2);
+					String sukunimi = kaikkiVaraukset.get(t).get(3);
+					
+					
+					
+					double hinta = hintahaku.haetaanHinta(varausid);
+					
+					 paragraph = document.createParagraph();
+					 run = paragraph.createRun();
+					run.setText("          "+etunimi+" "+sukunimi+"          "
+							+paiva+"          "+hinta);
+				
+			}
+			
+			
+		}
+		try {
+			document.write(out);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+		
+		
+		if(raportti.getValue()==null){
+			
+		}
+		else if(raportti.getValue().equals("Majoitukset")){
 			majoituksetRaportinLuonti();
 		}else{
 			palvelutRaportinLuonti();
