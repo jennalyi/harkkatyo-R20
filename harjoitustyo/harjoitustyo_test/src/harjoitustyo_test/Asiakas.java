@@ -112,6 +112,7 @@ public class Asiakas {
 				AsiakasOlio.setPostinro (tulosjoukko.getString("postinro"));
 				AsiakasOlio.setEmail (tulosjoukko.getString("email"));
 				AsiakasOlio.setPuhelinnro (tulosjoukko.getString("puhelinnro"));
+				System.out.print("kantaa"+tulosjoukko.getString("email"));
 			}
 			
 		}catch (SQLException e) {

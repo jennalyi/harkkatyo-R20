@@ -1,3 +1,7 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -7,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+//Voidaan hakea tietoja kannasta toimipisteiden ja mökkien hallinta lomaketta varten
+//sekä lisätä sieltä tulleita tietoja kantaan
 public class ToimiMokkiKanta {
 	Connection conn;
 	
@@ -26,8 +32,8 @@ public class ToimiMokkiKanta {
 		+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
 		
 		PreparedStatement lause = null;
-		//tarkistetaan että kaikilla tiedoilla on arvo
 		
+		//Toimipiste_id ei saa olla nolla
 		if(toimipiste_id != 0 ){
 		onnistuiko = 1;	
 		
@@ -187,9 +193,6 @@ public class ToimiMokkiKanta {
 				
 				//Asetetaan tulokset arraylistiin, ensimmäinen paikka listalla varattu virheille
 				if (tulosjoukko.next () == true){
-/*					if(tulosjoukko.next () == true){
-						tulokset.add("4");
-					}else{*/
 					
 					tulokset.add(1,""+tulosjoukko.getInt("toimipiste_id"));					
 					tulokset.add(2,tulosjoukko.getString("nimi"));

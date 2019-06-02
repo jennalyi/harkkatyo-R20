@@ -1,0 +1,186 @@
+/**
+ * Tekijä Joona Piispanen
+ */
+
+package harjoitustyo_test;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class GUI extends Application{
+	Button Bmokit, Bvaraus, Bpalveluthal, Basiakkaiden,Blaskut,Braportit;
+	VBox paneeliMokit;
+	Scene scene;
+	Scene scenemokit;
+	BorderPane ekapaneeli,paneelivaraus, laskupaneeli, asiakaspaneeli, raportitpaneeli, toimipaneeli, palvelutpaneeli;
+	VaraaMokki varaus;
+	Scene scenevaraus, scenelasku, sceneasiakas, sceneraportit, scenetoimi, scenepalvelut;
+	Stage window;
+	ToimipisteidenHallinta toimiolio;
+	Raportit raportitolio;
+	LaskujenHallinta laskut;
+	AsiakasHallinta asiakas;
+	PalveluidenHallinta palveluolio;
+	VBox boxi, boxiAsiakas;
+	Connection conn;
+	@Override 
+	public void start(Stage stage) {                     
+
+		window = stage;
+		kantaanyhdistys();
+		//Paneelien luonti
+		VBox keskipaneeli = new VBox(10); 
+		
+		//käyttöliittymän nappuloiden koko
+		keskipaneeli.setPrefWidth(190);
+		VBox otsikkopaneeli = new VBox(15);
+		otsikkopaneeli.setPrefHeight(80);
+		
+		//Luodaan otsikko bordepane yläosaan
+		ekapaneeli = new BorderPane();
+		Label otsikko = new Label("Mökkien varausjärjestelmä");
+		otsikko.setFont(new Font("Arial", 25));
+		
+		scene = new Scene(ekapaneeli, 400,400);  
+
+		//Asetetaan napeille toiminnallisuudet
+		Bmokit = new Button("Toimipisteiden ja mökkien hallinta");
+		Bmokit.setOnAction(e -> toimipisteidenHallinta());
+		Bmokit.setMinWidth(keskipaneeli.getPrefWidth());
+		Bvaraus = new Button("Majoitusten varaaminen");
+		Bvaraus.setOnAction(e -> mokkivaraus());
+		Bvaraus.setMinWidth(keskipaneeli.getPrefWidth());
+		Bpalveluthal = new Button("Palveluiden hallinta");
+		Bpalveluthal.setMinWidth(keskipaneeli.getPrefWidth());
+		Bpalveluthal.setOnAction(e -> palvelujenHallinta());
+		Basiakkaiden = new Button("Asiakkaiden hallinta");
+		Basiakkaiden.setMinWidth(keskipaneeli.getPrefWidth());
+		Basiakkaiden.setOnAction(e -> asiakkaathallinta());
+		Blaskut = new Button("Laskujen hallinta");
+		Blaskut.setMinWidth(keskipaneeli.getPrefWidth());
+		Blaskut.setOnAction(e -> laskuhallinta());
+		Braportit = new Button("Raportit");
+		Braportit.setMinWidth(keskipaneeli.getPrefWidth());
+		Braportit.setOnAction(e -> raportit());
+		
+		//Tietojen lisäys paneeleihin
+		otsikkopaneeli.getChildren().add(otsikko);
+		otsikkopaneeli.setAlignment(Pos.CENTER);
+		ekapaneeli.setTop(otsikkopaneeli);
+		ekapaneeli.setCenter(keskipaneeli);
+		keskipaneeli.getChildren().addAll(Bmokit,Bpalveluthal, Basiakkaiden,Bvaraus,Blaskut,Braportit);
+		keskipaneeli.setAlignment(Pos.TOP_CENTER);
+		
+
+
+		//Stagelle otsikko ja scene
+		stage.setTitle("Mökki varausjärjestelmä"); 	  
+		stage.setScene(scene); 
+		stage.show();  
+	}
+	
+	
+	//Luodaan varauslomake (varaaMokki olio) ja annetaan sille tarpeelliset parametrit
+	public void mokkivaraus(){
+		paneelivaraus = new BorderPane();
+		scenevaraus = new Scene(paneelivaraus, 500, 645);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		varaus = new VaraaMokki(paneelivaraus, window, scene, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(scenevaraus);
+
+	}
+	//Luodaan palvelujen hallinta lomake
+	public void palvelujenHallinta(){
+		palvelutpaneeli = new BorderPane();
+		scenepalvelut = new Scene(palvelutpaneeli, 425, 500);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		palveluolio = new PalveluidenHallinta(palvelutpaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(scenepalvelut);
+	}
+	//Luodaan laskuhallinta lomake
+	public void laskuhallinta(){
+		laskupaneeli = new BorderPane();
+		scenelasku = new Scene(laskupaneeli, 400, 540);
+		boxi = new VBox();
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		laskut = new LaskujenHallinta(laskupaneeli, window, scene, boxi, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(scenelasku);
+
+	}
+	//Luodaan asiakkaathallinta lomake
+	public void asiakkaathallinta(){
+		asiakaspaneeli = new BorderPane();
+		sceneasiakas = new Scene(asiakaspaneeli, 400, 420);
+		boxiAsiakas = new VBox();
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		asiakas = new AsiakasHallinta(asiakaspaneeli, window, scene,boxiAsiakas, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(sceneasiakas);
+
+	}
+	//Luodaan toimipisteidenHallinta lomake
+	public void toimipisteidenHallinta(){
+		toimipaneeli = new BorderPane();
+		scenetoimi = new Scene(toimipaneeli, 425, 645);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		toimiolio = new ToimipisteidenHallinta(toimipaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(scenetoimi);
+
+	}
+	//Luodaan raportit lomake
+	public void raportit(){
+		raportitpaneeli = new BorderPane();
+		sceneraportit= new Scene(raportitpaneeli, 400, 400);
+		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sekä luotu kantayhteys
+		raportitolio = new Raportit(raportitpaneeli, window, scene, conn);
+		//Asetetaan uusi scene stageen
+		window.setScene(sceneraportit);
+
+	}
+	
+	//Suoritetaan kantaan yhdistäminen
+	public void kantaanyhdistys(){
+		try {
+			//STEP 2: Register JDBC driver
+			Class.forName("org.mariadb.jdbc.Driver");
+
+			//STEP 3: Open a connection
+			System.out.println("Connecting to a selected database...");
+			//Asetetaan osoite, käyttäjä ja salasana
+			conn = DriverManager.getConnection(
+					"jdbc:mariadb://127.0.0.1/vp", "root", "Jiklaaee870");
+			System.out.println("Yhdistys tietokantaan onnistui");
+
+		} catch (SQLException se) {
+			se.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+		}//end try
+
+	}
+	
+	//Käynistetään koko ohjelma
+	public static void main(String args[]){ 
+		launch(args); 
+	} 
+
+}

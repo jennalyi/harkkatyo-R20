@@ -1,3 +1,5 @@
+
+
 package harjoitustyo_test;
 
 import java.sql.*;
@@ -15,6 +17,7 @@ public class Lasku {
 	private String m_postinro;
 	private Double m_summa;
 	private Double m_alv;
+	private boolean m_maksettu;
 
     public Lasku(){
  
@@ -50,6 +53,9 @@ public class Lasku {
 	public Double getAlv() {
 		return m_alv;
     }
+	public boolean getMaksettu() {
+		return m_maksettu;
+    }
     
 	public void setLaskuId (int Lid)
 	{
@@ -82,6 +88,11 @@ public class Lasku {
 	public void setAlv (Double alv) {
 		m_alv = alv;
 	}
+	public void setMaksettu (boolean maksettu) {
+		m_maksettu = maksettu;
+	}
+	
+	
     @Override
     public String toString(){
         return (m_lasku_id + " " + m_nimi + " " + m_asiakas_id);
@@ -92,7 +103,7 @@ public class Lasku {
 	*/
 	public static Lasku haeLasku (Connection connection, int Lid) throws SQLException, Exception { // tietokantayhteys v‰litet‰‰n parametrina
 		// haetaan tietokannasta laskua, jonka lasku_id = Lid 
-		String sql = "SELECT lasku_id,varaus_id,asiakas_id, nimi,  lahiosoite, postitoimipaikka, postinro, summa, alv " 
+		String sql = "SELECT lasku_id,varaus_id,asiakas_id, nimi,  lahiosoite, postitoimipaikka, postinro, summa, alv, maksettu " 
 					+ " FROM lasku WHERE lasku_id = ?"; // ehdon arvo asetetaan j‰ljemp‰n‰
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
@@ -128,7 +139,7 @@ public class Lasku {
                 LaskuOlio.setPostinro (tulosjoukko.getString("postinro"));
                 LaskuOlio.setSumma (tulosjoukko.getDouble("summa"));
                 LaskuOlio.setAlv (tulosjoukko.getDouble("alv"));
-				
+                LaskuOlio.setMaksettu (tulosjoukko.getBoolean("maksettu"));
 			}
 			
 		}catch (SQLException e) {
@@ -167,8 +178,8 @@ public class Lasku {
 		}
 		// parsitaan INSERT
 		sql = "INSERT INTO lasku "
-		+ "(lasku_id,varaus_id,asiakas_id, nimi,  lahiosoite, postitoimipaikka, postinro, summa, alv) "
-		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
+		+ "(lasku_id,varaus_id,asiakas_id, nimi,  lahiosoite, postitoimipaikka, postinro, summa, alv, maksettu) "
+		+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?,?, ?)";
 		// System.out.println("Lisataan " + sql);
 		lause = null;
 		try {
@@ -184,6 +195,7 @@ public class Lasku {
 			lause.setString(7, getPostinro ());
 			lause.setDouble(8, getSumma ());
 			lause.setDouble(9, getAlv ());
+			lause.setBoolean(10, getMaksettu ());
 			// suorita sql-lause
 			int lkm = lause.executeUpdate();	
 		//	System.out.println("lkm " + lkm);
@@ -227,7 +239,7 @@ public class Lasku {
 		}
 		// parsitaan Update, p‰ivite‰‰n tiedot lukuunottamatta avainta
 		sql = "UPDATE  lasku "
-		+ "SET varaus_id = ?,asiakas_id= ?, nimi = ?, lahiosoite = ?, postitoimipaikka = ?, postinro = ?, summa = ?, alv = ? "
+		+ "SET varaus_id = ?,asiakas_id= ?, nimi = ?, lahiosoite = ?, postitoimipaikka = ?, postinro = ?, summa = ?, alv = ?, maksettu = ? "
 		+ " WHERE lasku_id = ?";
 		
 		lause = null;
@@ -246,8 +258,9 @@ public class Lasku {
 			lause.setString(6, getPostinro ());
 			lause.setDouble(7, getSumma ());
 			lause.setDouble(8, getAlv ());
+			lause.setBoolean( 9, getMaksettu());
 			// where-ehdon arvo
-            lause.setInt( 9, getLaskuId());
+            lause.setInt( 10, getLaskuId());
 			// suorita sql-lause
 			int lkm = lause.executeUpdate();	
 			if (lkm == 0) {

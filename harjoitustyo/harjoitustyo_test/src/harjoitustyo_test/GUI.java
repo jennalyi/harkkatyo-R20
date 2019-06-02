@@ -1,3 +1,7 @@
+/**
+ * Tekij‰ Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -16,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+//P‰‰valikon luonti ja siirtyminen toisille lomakkeille
 public class GUI extends Application{
 	Button Bmokit, Bvaraus, Bpalveluthal, Basiakkaiden,Blaskut,Braportit;
 	VBox paneeliMokit;
@@ -89,14 +94,6 @@ public class GUI extends Application{
 	}
 	
 	
-	public void mokkialoita(){
-		paneeliMokit = new VBox(5);
-		scenemokit = new Scene(paneeliMokit, 400,400);
-
-		//Mokit olioMok = new Mokit(paneeliMokit, window, scene, scenemokit);
-		window.setScene(scenemokit);
-	}
-	
 	//Luodaan varauslomake (varaaMokki olio) ja annetaan sille tarpeelliset parametrit
 	public void mokkivaraus(){
 		paneelivaraus = new BorderPane();
@@ -119,7 +116,7 @@ public class GUI extends Application{
 	//Luodaan laskuhallinta lomake
 	public void laskuhallinta(){
 		laskupaneeli = new BorderPane();
-		scenelasku = new Scene(laskupaneeli, 400, 500);
+		scenelasku = new Scene(laskupaneeli, 400, 540);
 		boxi = new VBox();
 		//Annetaan alotuspaneeli, window ja scene takaisin paluuta varten sek‰ luotu kantayhteys
 		laskut = new LaskujenHallinta(laskupaneeli, window, scene, boxi, conn);
@@ -162,24 +159,19 @@ public class GUI extends Application{
 	//Suoritetaan kantaan yhdist‰minen
 	public void kantaanyhdistys(){
 		try {
-			//STEP 2: Register JDBC driver
 			Class.forName("org.mariadb.jdbc.Driver");
 
-			//STEP 3: Open a connection
-			System.out.println("Connecting to a selected database...");
+			System.out.println("Yhdistet‰‰n tietokantaan...");
 			//Asetetaan osoite, k‰ytt‰j‰ ja salasana
 			conn = DriverManager.getConnection(
-					"jdbc:mariadb://127.0.0.1/vp", "root", "Jiklaaee870");
-			System.out.println("Connected database successfully...");
+					"jdbc:mariadb://127.0.0.1/vp", "root", "root");
+			System.out.println("Yhdistys tietokantaan onnistui");
 
 		} catch (SQLException se) {
-			//Handle errors for JDBC
 			se.printStackTrace();
 		} catch (Exception e) {
-			//Handle errors for Class.forName
 			e.printStackTrace();
 		} finally {
-			//finally block used to close resources
 
 		}//end try
 

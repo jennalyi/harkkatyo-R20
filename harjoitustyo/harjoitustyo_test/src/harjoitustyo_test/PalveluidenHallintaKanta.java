@@ -1,3 +1,8 @@
+/*
+ * Tekij‰ Joona Piispanen
+ */
+
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -6,17 +11,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+//Voidaan hakea tietoja palveluiden hallinta lomaketta varten sek‰ lis‰t‰ sielt‰ tulevia tietoja kantaan
 public class PalveluidenHallintaKanta {
 	Connection conn;
 	
+	/**
+	 * Saadaan parametrina luotu tietokanta yhteys
+	 * @param conn
+	 */
 	public PalveluidenHallintaKanta(Connection conn){
 		this.conn = conn;
 		conn = null;
 		
 	}
+	
+/*
+ * Lis‰t‰‰n uusi palvelu kantaan
+ */
 	public int lisaaPalvelu(int palvelu_id , int toimipiste_id, String nimi , int tyyppi , String kuvaus, double hinta,  double alv){
 		int lkm = 0;
 		int onnistuiko = 2;
+		//Luodaan insert lause
 		String sql = "INSERT INTO Palvelu "
 		+ "(palvelu_id, toimipiste_id, nimi, tyyppi, kuvaus, hinta, alv) "
 		+ " VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -55,10 +70,15 @@ public class PalveluidenHallintaKanta {
             // JDBC virheet
             e.printStackTrace();
 		}
-	}
+	}	
+		//Palautetaan numero miten meni
 		return onnistuiko;
 	}//lis‰‰ palvelu
 	
+	
+	/*
+	 * Muokataan olemassa olevaa palvelua kannassa
+	 */
 	public int muokkaaPalvelua(int palvelu_id , int toimipiste_id, String nimi , int tyyppi , String kuvaus, double hinta,  double alv){
 		int lkm = 0;
 		int onnistuiko = 2;
@@ -100,9 +120,13 @@ public class PalveluidenHallintaKanta {
             e.printStackTrace();
 		}
 	}
+		//palautetaan tieto miten meni
 		return onnistuiko;
 	}//muokkaa palvelua
 	
+	/*
+	 * Poistetaan palvelu kannasta palvelu id perusteella
+	 */
 	public int poistaPalvelu(int palvelu_id){
 		int lkm = 0;
 		int onnistuiko = 2;
@@ -136,17 +160,21 @@ public class PalveluidenHallintaKanta {
             e.printStackTrace();
 		}
 	}
+		//palautetaan tulos miten onnistui
 		return onnistuiko;
 	}
 	
-	
+	/*
+	 * Haetaan olemassa oleva palvelu kannasta
+	 */
 	public ArrayList<String> haePalvelu(int id, String nimi){
+		//Luodaan arraylist tuloksien palauttamiseen
 		ArrayList<String> tulokset = new ArrayList<String>();
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
 		tulokset.add(0, "2");
 		try {
-			// luo PreparedStatement-olio sql-lauseelle
+			// Haetaan tietoja palvelu id perusteella
 			if(id != 0 && nimi.isEmpty()){
 			String sql = "SELECT palvelu_id, toimipiste_id, nimi, tyyppi, kuvaus, hinta, alv " 
 					+ " FROM Palvelu WHERE palvelu_id = ?"; // ehdon arvo asetetaan j‰ljemp‰n‰
@@ -154,6 +182,7 @@ public class PalveluidenHallintaKanta {
 			lause = conn.prepareStatement(sql);
 			lause.setInt( 1, id); 
 			}
+			//Haetaan tietoja nimen perusteella
 			else if(id == 0 && nimi.isEmpty()==false){
 				String sql = "SELECT palvelu_id, toimipiste_id, nimi, tyyppi, kuvaus, hinta, alv " 
 						+ " FROM Palvelu WHERE nimi = ?"; // ehdon arvo asetetaan j‰ljemp‰n‰
@@ -161,6 +190,7 @@ public class PalveluidenHallintaKanta {
 				lause = conn.prepareStatement(sql);
 				lause.setString( 1, nimi); 
 			}
+			//Haetaan tietoja nimen ja palvelu id perusteella
 			else if(id != 0 && nimi.isEmpty()==false){
 				String sql = "SELECT palvelu_id, toimipiste_id, nimi, tyyppi, kuvaus, hinta, alv " 
 						+ " FROM Palvelu WHERE nimi = ? AND palvelu_id = ?"; // ehdon arvo asetetaan j‰ljemp‰n‰
@@ -172,11 +202,9 @@ public class PalveluidenHallintaKanta {
 
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
-
+				
+			//Jos tulosjoukossa jotakin asetetaan tulokset arraylistiin
 				if (tulosjoukko.next () == true){
-/*					if(tulosjoukko.next () == true){
-						tulokset.add("4");
-					}else{*/
 					
 					tulokset.add(1,""+tulosjoukko.getInt("palvelu_id"));					
 					tulokset.add(2,""+tulosjoukko.getInt("toimipiste_id"));					
@@ -186,17 +214,23 @@ public class PalveluidenHallintaKanta {
 					tulokset.add(6,""+tulosjoukko.getDouble("hinta"));
 					tulokset.add(7,""+tulosjoukko.getDouble("alv"));
 					
+					//Jos haku palauttaa useita arvoja
 					if(tulosjoukko.next () == true){
 			
 						tulokset.set(0, "4");
+					//Jos ei palauta
 					}else{
 						tulokset.set(0, "1");
 					}
+					//Haku ei palauta mit‰‰n
 					}else{
 						tulokset.set(0, "5");
 					}
 
-			
+				//suljetaan yhteydet
+				lause.close();
+				tulosjoukko.close();
+				
 		} catch (SQLException se) {
 			// SQL virheet
 			tulokset.set(0,"3");
@@ -206,7 +240,7 @@ public class PalveluidenHallintaKanta {
 			tulokset.set(0,"2");
 			e.printStackTrace();
 		}
-
+		//Palautetaan arraylist
 		return tulokset;
 	}
 }

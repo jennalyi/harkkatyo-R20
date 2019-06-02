@@ -1,17 +1,47 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
+
 package harjoitustyo_test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+import org.apache.poi.hssf.record.RightMarginRecord;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+//import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -29,7 +59,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 
-
+//Luodaan raportti lomake ja toiminallisuus siihen
 public class Raportit {
 	BorderPane paneeliraportit;
 	GridPane kaikki;
@@ -49,45 +79,51 @@ public class Raportit {
 		this.paasivu = paasivu;
 		this.conn = conn;
 		
+		//Otsikko tiedot
 		paaotsikko = new Label("Raportit");
 		paaotsikko.setFont(new Font("Arial", 25));
-		paaotsikko.setStyle("-fx-padding: 10 0 0 75;");
-		
+		paaotsikko.setStyle("-fx-padding: 10 0 0 75;");		
 		paneeliraportit.setTop(paaotsikko);
+		
+		//Gridpane, johon laitetaan kaikki komponentit
 		kaikki = new GridPane();
 		kaikki.setPadding(new Insets(10,30,10,75));
 		kaikki.setVgap(10.0);
 		kaikki.setHgap(10);
 		paneeliraportit.setCenter(kaikki);
+		//Luodaan kalenterit lomakkeelle
 		kaleterinluonti();
+		
+		//Luodaan muut komponentit lomakkeelle
 		grafiikka();
 		
-	
-		Btakaisin = new Button("takaisin");
 		
+		//Luodaan nappi, jolla pääsee takaisin pääsivulle
+		Btakaisin = new Button("takaisin");		
 		paneeliraportit.setBottom(Btakaisin);
 		paneeliraportit.setPadding(new Insets(0,0,10,10));
 		Btakaisin.setOnAction(e -> window.setScene(paasivu));
+		
+		//Tulostaa nappia painamalla tulostetaan raportti
 		Btulosta.setOnAction(e -> luoRaportti());
 		
 
 		
 }
-	
+	/*
+	 * Luodaan komponentit ja asetetaan ne gridpaneen
+	 */
 	public void grafiikka(){
+		//choicebox osio
 		Lchoiceselite = new Label("Valitse raportti");
 		raportti = new ChoiceBox <String>();
 		raportti.getItems().addAll("Majoitukset", "Lisäpalvelut");
-		
-		Ltulosta = new Label("Toimipisteen tunnus");
-		Ttulosta = new TextField();
 		Btulosta = new Button("Tulosta raportti");
 		Lonnistuiko = new Label();
 		
-		kaikki.add(Lchoiceselite, 0, 0);
-		kaikki.add(raportti, 0, 1);
-		kaikki.add(Ltulosta, 0, 2);
-		kaikki.add(Ttulosta, 0, 3);
+		//Asetetaan komponentit gridpaneen
+		kaikki.add(Lchoiceselite, 0, 2);
+		kaikki.add(raportti, 0, 3);
 		kaikki.add(Btulosta, 1, 7);
 		kaikki.add(kalenterivihje, 0, 4);
 		kaikki.add(aloituspaiva, 0, 5);
@@ -96,15 +132,13 @@ public class Raportit {
 		kaikki.add(Lonnistuiko, 0, 8);
 	}
 	
+	/*
+	 * Luodaan kalenterit
+	 */
 	public void kaleterinluonti(){
 		kalenterivihje = new Label("Valitse ajankohdan aloituspäivä");
-		//kalenterivihje.setFont(new Font("Arial", 12));
-		//kalenterivihje.setStyle("-fx-padding: 10 0 0 0;");
 		
 		kalenterivihje2 = new Label("Valitse ajankohdan lopetuspäivä");
-		//kalenterivihje2.setFont(new Font("Arial", 12));
-		//kalenterivihje2.setStyle("-fx-padding: 10 0 0 0;");
-		//kalenterivihje.setStyle("-fx-font-weight: bold;");
 		
 		//Luodaan datepickerit aloitus ja lopetuspäivälle
 		aloituspaiva = new DatePicker();
@@ -127,90 +161,208 @@ public class Raportit {
 		//Asetetaan lopetus päiväksi huominen päivä
 		lopetuspaiva.setValue(aloituspaiva.getValue().plusDays(1));
 
-		//paiva = lopetuspaiva.getValue();
-
-
-		//keski.getChildren().addAll(kalenterivihje,new Label("Valitse aloituspäivä:"), aloituspaiva, new Label("Valitse lopetuspäivä:"),lopetuspaiva);
 	}
+	
+	/*
+	 * Word raportin luonti
+	 */
 	public void luoRaportti(){
 		toimipiste_id = 0;
-		RaporttiKanta raporttiOlio = new RaporttiKanta(conn);
+		
+		//Luodaan oliot, joiden avulla haetaan tietoa kannasta
+		RaporttiKanta raporttiOlio = new RaporttiKanta(conn);		
 		haeTiedot hintahaku = new haeTiedot(conn);
+		
+		//Luodaan arraylistit tiedon vastaan ottamista varten olioilta
 		ArrayList<Integer> toimipisteet = new ArrayList<Integer>();
 		ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
-		//ArrayList<String> varaus = new ArrayList<String>();
-		try{
-			toimipiste_id = Integer.parseInt(Ttulosta.getText());
-		}catch (NumberFormatException exception){
-			Lonnistuiko.setText("Id täytyy olla numero");
-		}
+		
+		if(aloituspaiva.getValue()==null || lopetuspaiva.getValue()==null){
+			Lonnistuiko.setText("Valitse alotus ja lopetus päivät");
+		}else{
+		//Haetaan kalentereista aloitus ja lopetuspäivät
 		Date alotus = Date.valueOf(aloituspaiva.getValue());
 		Date lopetus = Date.valueOf(lopetuspaiva.getValue());
-		
-		
-		
-
-
-		
-		
-		for(int m =0; m<5;m++){
-
-		}
-		
-		
-
-		
-		
-		
-
-		
+	
 		
 		toimipisteet = raporttiOlio.haetaanToimipisteet();
 		
+		if(raportti.getValue()==null){
+			Lonnistuiko.setText("Valitse ensin raportti tyyppi");
+		}
+		else if(raportti.getValue().equals("Majoitukset")){
 		try {
 			XWPFDocument document = new XWPFDocument();
-			FileOutputStream out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/test.docx"));
+			//Mihin tallennetaan raportti
+			FileOutputStream out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/Majoitukset.docx"));
 			
 			XWPFParagraph paragraph = document.createParagraph();
 			XWPFRun run = paragraph.createRun();
-			run.setText("Toimipiste                                Asiakas                                Pvm                                Summa");
-		for(int i =0; i<toimipisteet.size();i++){
-			System.out.println(toimipisteet.get(i));
-			kaikkiVaraukset = raporttiOlio.haetaanVaraus(toimipisteet.get(i), alotus, lopetus);
-			
-			
-			if(kaikkiVaraukset.size()>0){
-
-			
-			
-			 paragraph = document.createParagraph();
+			run.setText("Majoitukset toimipisteittäin ");
+			run.addBreak();
+			run.setText(alotus+" - "+lopetus);
+			run.setBold(true);
+			run.setFontSize(16);
+			paragraph.setAlignment(ParagraphAlignment.CENTER);
+			paragraph = document.createParagraph();
 			 run = paragraph.createRun();
-			String toimipiste = kaikkiVaraukset.get(0).get(4);
-			run.setText(toimipiste);
-			System.out.println("\n\n täällä");
-			}
+			 run.setText("");
+           // XWPFTable tab = document.createTable();
+			XWPFTable table = document.createTable();
+			 //Asetetaan taulukko keskelle
+			 setTableAlign(table, ParagraphAlignment.CENTER);
 			
+			//rajat pois näkyvistä
+			table.getCTTbl().getTblPr().unsetTblBorders();
+			
+			//Lukitaan taulun koko
+			CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+			type.setType(STTblLayoutType.FIXED);
+			
+            XWPFTableRow row = table.getRow(0); 
+
+            
+            //vain yks raja otsikon alle
+            CTTc ctTc = row.getCell(0).getCTTc();  
+            CTTcPr tcPr = ctTc.addNewTcPr();
+            CTTcBorders border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+
+            
+            // Luodaan ensimmäinen sarake ja sen ekalle riville Toimipiste nimi  
+            row.getCell(0).setText("Toimipiste");
+            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+            row.setHeight((int)(3000*1/10)); //set height 1/10 inch.
+            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT);           
+            
+            XWPFTableCell cell = row.getCell(0);
+            CTTblWidth cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            CTTcPr pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(2000));
+            
+            //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+            row.addNewTableCell().setText(""); 
+            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+            ctTc = row.getCell(1).getCTTc();  
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            //Luodaan sarake asiakas tiedolle
+            row.addNewTableCell().setText("Asiakas");             
+            cell = row.getCell(2);
+            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(2000));
+            ctTc = row.getCell(2).getCTTc();    
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+            row.addNewTableCell().setText(""); 
+            row.getCell(3).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+            ctTc = row.getCell(3).getCTTc(); 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            //Luodaan sarake päivämäärälle
+            row.addNewTableCell().setText("Pvm");
+            cell = row.getCell(4);
+            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(1500));
+            ctTc = row.getCell(4).getCTTc(); 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            
+          //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+            row.addNewTableCell().setText(""); 
+            row.getCell(5).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(500));
+            ctTc = row.getCell(5).getCTTc(); 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            //Luodaan sarake summalle
+            row.addNewTableCell().setText("Summa");  
+             cell = row.getCell(6);
+             cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+             pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(1500));
+            ctTc = row.getCell(6).getCTTc(); 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            //Otsikkorivin jälkeen tyhjä rivi
+            row = table.createRow();     
+            row.setHeight((int)(1400*1/10)); 
+            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); 
+
+            
+            //Käydään lävite kaikki toimipisteet onko niillä aika ikkunan sisällä varauksia
+			for(int i =0; i<toimipisteet.size();i++){
+			
+			//Haetaan kaikki toimipisteen varaukset, jotka aloitus ja lopetuspäivän välillä
+			kaikkiVaraukset = raporttiOlio.haetaanVaraus(toimipisteet.get(i), alotus, lopetus);
+
+			//Jos toimipisteellä on varauksia
+			if(kaikkiVaraukset.size()>0){
+				String toimipiste = kaikkiVaraukset.get(0).get(4);
+	            row = table.createRow();
+	            row.getCell(0).setText(toimipiste); 
+	            
+	            
+			}
+			double hintaKaikki = 0;
+			
+			//Syötetään tietyn toimipisteen kaikki varaukset word dokumenttiin riveittäin
 			for(int t=0; t<kaikkiVaraukset.size(); t++){
 				
-				
+					//Asetetaan tiedot muuttujiin
 					int varausid = Integer.parseInt(kaikkiVaraukset.get(t).get(0));
 					String paiva = kaikkiVaraukset.get(t).get(1);
 					String etunimi = kaikkiVaraukset.get(t).get(2);
 					String sukunimi = kaikkiVaraukset.get(t).get(3);
 					
-					
-					
 					double hinta = hintahaku.haetaanHinta(varausid);
+					//Lasketaan varauksien yhteen laskettua hintaa
+					hintaKaikki +=hinta;
 					
-					 paragraph = document.createParagraph();
-					 run = paragraph.createRun();
-					run.setText("          "+etunimi+" "+sukunimi+"          "
-							+paiva+"          "+hinta);
+					//Asetaan tiedot riveille
+		            row = table.createRow();
+		            row.getCell(2).setText(etunimi+" "+sukunimi); 
+		            row.getCell(4).setText(paiva);
+		            row.getCell(6).setText(""+hinta);
 				
 			}
-			
-			
+			//Jos varauksia löytyi asetetaan toimipiste yhteensä riville
+			if(kaikkiVaraukset.size()>0){
+            row = table.createRow();
+            row.getCell(0).setText("Toimipiste yhteensä"); 
+            row.getCell(6).setText(""+ hintaKaikki);
+            
+            //Luodaan väliä seuraavaan toimipisteeseen
+            row = table.createRow();
+            row = table.createRow();
+            
+            
+            }
+			Lonnistuiko.setText("Raportin tulostus onnistui");
 		}
+		//Suljetaan streami ja dokumentti
 		try {
 			document.write(out);
 			out.close();
@@ -218,31 +370,256 @@ public class Raportit {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		//Jos tiedostoa ei löydetä
 		} catch (FileNotFoundException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
-		
-		
-		
-		if(raportti.getValue()==null){
-			
-		}
-		else if(raportti.getValue().equals("Majoitukset")){
-			majoituksetRaportinLuonti();
-		}else{
-			palvelutRaportinLuonti();
-		}
-	}
-	
-	
-	public void majoituksetRaportinLuonti(){
-		
-	}
 
-	public void palvelutRaportinLuonti(){
-		
+		}else{
+			try {
+				XWPFDocument document = new XWPFDocument();			
+				
+				//Mihin tallennetaan raportti
+				FileOutputStream out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/Palvelut.docx"));
+				RightMarginRecord rm = new RightMarginRecord();
+				rm.setMargin(2);
+				
+				
+				XWPFParagraph paragraph = document.createParagraph();
+				XWPFRun run = paragraph.createRun();				
+				run.setText("Palvelut toimipisteittäin ja asiakkaittain ");
+				run.addBreak();
+				run.setText(alotus+" - "+lopetus);
+				run.setBold(true);
+				run.setFontSize(16);
+				paragraph.setAlignment(ParagraphAlignment.CENTER);
+				paragraph = document.createParagraph();
+				 run = paragraph.createRun();
+				 run.setText("");
+	           // XWPFTable tab = document.createTable();
+				XWPFTable table = document.createTable();
+				
+				 //Asetetaan taulukko keskelle
+				 setTableAlign(table, ParagraphAlignment.CENTER);
+				
+				//rajat pois näkyvistä
+				table.getCTTbl().getTblPr().unsetTblBorders();
+				
+				//Lukitaan taulun koko
+				CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+				type.setType(STTblLayoutType.FIXED);
+				
+	            XWPFTableRow row = table.getRow(0); 
+	            	            
+	            
+	            //vain yks raja otsikon alle
+	            CTTc ctTc = row.getCell(0).getCTTc(); 
+	            // here is need to change... 
+	            CTTcPr tcPr = ctTc.addNewTcPr();
+	            CTTcBorders border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+
+
+	            
+	            
+	            // Luodaan ensimmäinen sarake ja sen ekalle riville Toimipiste nimi  
+	            row.getCell(0).setText("Toimipiste");
+	            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+	            row.setHeight((int)(3000*1/10)); 
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT);           
+	            
+	            XWPFTableCell cell = row.getCell(0);
+	            CTTblWidth cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	            CTTcPr pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(2000));
+	            
+	            //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+	            row.addNewTableCell().setText(""); 
+	            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+	            ctTc = row.getCell(1).getCTTc(); 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            //Luodaan sarake asiakas tiedolle
+	            row.addNewTableCell().setText("Asiakas");             
+	            cell = row.getCell(2);
+	            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	            pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(2000));
+	            ctTc = row.getCell(2).getCTTc(); 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+	            row.addNewTableCell().setText(""); 
+	            row.getCell(3).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+	            ctTc = row.getCell(3).getCTTc(); 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            
+	            
+	            //Luodaan sarake palvelu tiedolle
+	            row.addNewTableCell().setText("Palvelu");             
+	            cell = row.getCell(4);
+	            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	            pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(2000));
+	            ctTc = row.getCell(4).getCTTc();  
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            //Luodaan tyhjä sarake jotta tekstit ei mene yhteen
+	            row.addNewTableCell().setText(""); 
+	            row.getCell(5).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+	            ctTc = row.getCell(5).getCTTc(); 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            
+	            //Luodaan sarake summalle
+	            row.addNewTableCell().setText("Summa");  
+	             cell = row.getCell(6);
+	             cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	             pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(1500));
+	            ctTc = row.getCell(6).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            //Otsikkorivin jälkeen tyhjä rivi
+	            row = table.createRow(); // Second Row     
+	            row.setHeight((int)(1400*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+
+	            
+	            //Käydään lävite kaikki toimipisteet onko niillä aika ikkunan sisällä varauksia
+				for(int i =0; i<toimipisteet.size();i++){
+				
+				//Haetaan kaikki toimipisteen varaukset, jotka aloitus ja lopetuspäivän välillä
+				kaikkiVaraukset = raporttiOlio.haetaanVaraus2(toimipisteet.get(i), alotus, lopetus);
+
+				//Jos toimipisteellä on varauksia
+				if(kaikkiVaraukset.size()>0){
+					String toimipiste = kaikkiVaraukset.get(0).get(5);
+		            row = table.createRow();
+		            row.getCell(0).setText(toimipiste); 
+		            
+		            
+				}
+				double hintaKaikki = 0;
+				
+				//Syötetään tietyn toimipisteen kaikki varaukset word dokumenttiin riveittäin
+				for(int t=0; t<kaikkiVaraukset.size(); t++){
+					double hintaAsiakas = 0;
+						//Asetetaan tiedot muuttujiin
+						int varausid = Integer.parseInt(kaikkiVaraukset.get(t).get(0));
+						String paiva = kaikkiVaraukset.get(t).get(1);
+						 paiva += " - " +kaikkiVaraukset.get(t).get(2);
+						String etunimi = kaikkiVaraukset.get(t).get(3);
+						String sukunimi = kaikkiVaraukset.get(t).get(4);
+						
+			            
+			            ArrayList<ArrayList<String>> kaikkiPalvelut = new ArrayList<ArrayList<String>>();
+			            
+			            //Haetaan kannasta kaikki kyseisen varausid palvelut
+			            kaikkiPalvelut = hintahaku.haetaanPalvelut(varausid);
+			            
+			            
+			            if(kaikkiPalvelut.size()>0){
+							//Asetaan tiedot riveille
+				            row = table.createRow();
+				            row.getCell(2).setText(etunimi+" "+sukunimi); 
+			            	
+			            	
+			            //Asetetaan palvelut riveille ja lasketaan asiakkaan varauksista yhteishinta
+			            for (int tr = 0; tr<kaikkiPalvelut.size(); tr++){
+			            	row.getCell(4).setText(kaikkiPalvelut.get(tr).get(0));
+			            	double hinta = Double.parseDouble(kaikkiPalvelut.get(tr).get(1));
+			            	row.getCell(6).setText(""+hinta);
+			            	
+			            	//Lasketaan toimipisteen kaikkien palvelujen hinta
+			            	hintaKaikki +=hinta;
+			            	//Lasketaan yksittäisen asiakkaan kokonaishinta
+			            	hintaAsiakas +=hinta;
+			            	
+			            	row = table.createRow();
+			            }
+			            //Laitetaan riville asiakkaan palvelujen kokonaishinta
+						
+				            row = table.createRow();
+				            row.getCell(0).setText("Asiakas yhteensä"); 
+				            row.getCell(6).setText(""+ hintaAsiakas);
+				            
+				            //Luodaan väliä seuraavaan toimipisteeseen
+				            row = table.createRow();
+				            
+				            }
+					
+				}
+				//Jos varauksia löytyi asetetaan toimipiste yhteensä riville
+				if(kaikkiVaraukset.size()>0){
+	            row = table.createRow();
+	            row.getCell(0).setText("Toimipiste yhteensä"); 
+	            row.getCell(6).setText(""+ hintaKaikki);
+	            
+	            //Luodaan väliä seuraavaan toimipisteeseen
+	            row = table.createRow();
+	            row = table.createRow();
+	            
+	            
+	            }
+				Lonnistuiko.setText("Raportin tulostus onnistui");
+			}
+			//Suljetaan streami ja dokumentti
+			try {
+				document.write(out);
+				out.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			//Jos tiedostoa ei löydetä
+			} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+		}
 	}
+	//Voidaan muokata taulun tyyliä
+	public void setTableAlign(XWPFTable table,ParagraphAlignment align) {
+	    CTTblPr tblPr = table.getCTTbl().getTblPr();
+	    CTJc jc = (tblPr.isSetJc() ? tblPr.getJc() : tblPr.addNewJc());
+	    STJc.Enum en = STJc.Enum.forInt(align.getValue());
+	    jc.setVal(en);
+	}
+	//Voidaan muokata rivin muotoilua
+	private static void setRun (XWPFRun run , int fontSize ,String text ,  boolean bold , boolean addBreak) {
+	    run.setFontSize(fontSize);
+	    
+	    run.setText(text);
+	    run.setBold(bold);
+	    if (addBreak) run.addBreak();
+	}
+	
+	
 	
 	}

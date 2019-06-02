@@ -1,3 +1,7 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -16,7 +20,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 
-
+//Luodaan toimipisteiden ja mökkejä varten lomake sekä siihen toiminallisuus
 public class ToimipisteidenHallinta {
 	BorderPane paneelitoimi;
 	GridPane kentat, napit;
@@ -311,9 +315,10 @@ public class ToimipisteidenHallinta {
 				int tulos = paikkaolio.poistaToimi(toimipisteID);
 				//jos Poisto onnistui
 				if(tulos ==1){
-					Lvirhe.setText("Poisto onnistui");
 					tyhjennaToimi();
 					tyhjennaMokki();
+					Lvirhe.setText("Poisto onnistui");
+
 				}
 				//tuli jokin tietokanta virhe
 				else if(tulos==3){
@@ -359,6 +364,10 @@ public class ToimipisteidenHallinta {
 					Ttoipostnum.setText(tulokset.get(5));
 					Ttoiemail.setText(tulokset.get(6));
 					Ttoipuh.setText(tulokset.get(7));
+					
+					//Asetetaan tuloksesta toimipiste id
+					toimipisteID = Integer.parseInt(tulokset.get(1));
+					
 					//Disabloidaan id ettei sitä voi muuttaa
 					TtoiID.setDisable(true);
 					//lisää ja hae napit näkymättömäksi
@@ -452,6 +461,7 @@ public class ToimipisteidenHallinta {
 
 				int toiimiID = Integer.parseInt(TtoimiMokki.getText());
 				int hintaa = Integer.parseInt(TmokHinta.getText());	
+				
 				int tulos = paikkaolio.muokkaaMokki(toiimiID,mokkiID, Tmoknimi.getText(), hintaa);
 				
 				//jos Muokkaus onnistui
@@ -510,7 +520,7 @@ public class ToimipisteidenHallinta {
 		try{
 			//Tarkastetaan että nimi tai tunnus kenttä täytetty
 			if(TmokID.getText().isEmpty() && Tmoknimi.getText().isEmpty()){
-				LmokVirhe.setText("Tunnus tai nimi pakollinen");
+				LmokVirhe.setText("Mökki tunnus tai nimi pakollinen");
 			}
 			else{
 				//Haetaan nimen perusteella
@@ -529,7 +539,10 @@ public class ToimipisteidenHallinta {
 					TtoimiMokki.setText(tulokset.get(1));
 					TmokID.setText(tulokset.get(2));
 					Tmoknimi.setText(tulokset.get(3));
-					TmokHinta.setText(tulokset.get(4));					
+					TmokHinta.setText(tulokset.get(4));		
+					//Asetetaan mokki id
+					mokkiID = Integer.parseInt(tulokset.get(2));
+					
 					//Napeille näkyvyydet
 					mokMuokkaa.setVisible(true);
 					mokPoista.setVisible(true);

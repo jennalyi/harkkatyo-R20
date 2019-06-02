@@ -1,3 +1,7 @@
+/**
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.*;
@@ -9,6 +13,7 @@ import java.util.Map;
 
 import javafx.util.Pair;
 
+//Haetaan tietoja kannasta varaamista varten sekä lisätään kantaan varauksesta tulleita tietoja
 public class Kanta {
 	// JDBC driver name and database URL
 	Connection conn;
@@ -49,7 +54,8 @@ public class Kanta {
 				asiakasID = 0;
 			}
 
-
+			lause.close();
+			tulosjoukko.close();
 		} catch (SQLException se) {
 			// SQL virheet
 			se.printStackTrace();
@@ -79,11 +85,13 @@ public class Kanta {
 				if (tulosjoukko.next () == true){
 				
 					haku = "Toimipaikka: \n"+tulosjoukko.getString("nimi");
+				//Palautetaan ei löytynyt
 				}else{
 					haku = "Toimipaikkaa ei löydy";
 				}
 
-			
+				lause.close();
+				tulosjoukko.close();
 		} catch (SQLException se) {
 			// SQL virheet
 			se.printStackTrace();
@@ -123,7 +131,8 @@ public class Kanta {
 					toimiID = 0;
 				}
 
-			
+				lause.close();
+				tulosjoukko.close();
 		} catch (SQLException se) {
 			// SQL virheet
 			se.printStackTrace();
@@ -168,6 +177,8 @@ public class Kanta {
 				onnistuiko = 2;
 				System.out.println("Ei onnistu...");
 			}
+			
+			lause.close();
 		} catch (SQLException se) {
             // SQL virheet
 			onnistuiko = 3;
@@ -261,7 +272,7 @@ public class Kanta {
 		}
 		
 		return haku;
-	}//haetaanPaivat
+	}//haetaanMokkiHinta
 	
 	//Lisätään palvelu
 	public String lisaaPalv(int id){
@@ -322,7 +333,7 @@ public class Kanta {
 		}
 		
 		return haku;
-	}//haetaanToimipiste
+	}//lisaaPalv
 	
 	//Voidaan hakea hinta muuttuja
 	public int gethinta(){
@@ -529,6 +540,8 @@ public class Kanta {
 					tulokset.set(0,"1");
 				}
 			
+				lause.close();
+				
 		} catch (SQLException se) {
 			// SQL virheet
 			tulokset.set(0,"3");

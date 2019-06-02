@@ -1,3 +1,7 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -14,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+//Palveluiden hallinalomakkeen luonti ja toiminnallisuus
 public class PalveluidenHallinta {
 	BorderPane paneeliPalvelut;
 	GridPane kentat, napit;
@@ -206,7 +211,9 @@ public class PalveluidenHallinta {
 	/**
 	 * Muokkaa palvelua
 	 */
-	public void muokkaaPalvelua(){		
+	public void muokkaaPalvelua(){	
+		LpalVirhe.setText("");
+		LpalVirhe2.setText("");
 		try{
 			//Tarkastetaan että kaikki kenttät on täytetty
 			if(TtoiID.getText().isEmpty() || Tpalnimi.getText().isEmpty() || TpalID.getText().isEmpty() 
@@ -284,7 +291,7 @@ public class PalveluidenHallinta {
 		try{
 			//Tarkastetaan että nimi tai tunnus kenttä täytetty
 			if(TpalID.getText().isEmpty() && Tpalnimi.getText().isEmpty()){
-				LpalVirhe.setText("Tunnus tai nimi pakollinen");
+				LpalVirhe.setText("Palvelu tunnus tai \n nimi pakollinen");
 			}
 			else{
 				//Haetaan nimen perusteella

@@ -1,0 +1,424 @@
+package harjoitustyo_test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
+
+import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+
+
+
+public class Raportit {
+	BorderPane paneeliraportit;
+	GridPane kaikki;
+	ChoiceBox<String> raportti;
+	Stage window;
+	Scene paasivu;
+	Label paaotsikko, Lchoiceselite, Ltulosta, Lonnistuiko, kalenterivihje, kalenterivihje2;
+	Button Btakaisin, Btulosta;
+	TextField Ttulosta;
+	Connection conn;
+	DatePicker aloituspaiva, lopetuspaiva;
+	int toimipiste_id = 0;
+	
+	public Raportit(BorderPane paneeliraportit, Stage window, Scene paasivu, Connection conn){
+		this.paneeliraportit = paneeliraportit;
+		this.window = window;
+		this.paasivu = paasivu;
+		this.conn = conn;
+		
+		paaotsikko = new Label("Raportit");
+		paaotsikko.setFont(new Font("Arial", 25));
+		paaotsikko.setStyle("-fx-padding: 10 0 0 75;");
+		
+		paneeliraportit.setTop(paaotsikko);
+		kaikki = new GridPane();
+		kaikki.setPadding(new Insets(10,30,10,75));
+		kaikki.setVgap(10.0);
+		kaikki.setHgap(10);
+		paneeliraportit.setCenter(kaikki);
+		kaleterinluonti();
+		grafiikka();
+		
+	
+		Btakaisin = new Button("takaisin");
+		
+		paneeliraportit.setBottom(Btakaisin);
+		paneeliraportit.setPadding(new Insets(0,0,10,10));
+		Btakaisin.setOnAction(e -> window.setScene(paasivu));
+		Btulosta.setOnAction(e -> luoRaportti());
+		
+
+		
+}
+	
+	public void grafiikka(){
+		Lchoiceselite = new Label("Valitse raportti");
+		raportti = new ChoiceBox <String>();
+		raportti.getItems().addAll("Majoitukset", "Lis‰palvelut");
+		
+		Ltulosta = new Label("Toimipisteen tunnus");
+		Ttulosta = new TextField();
+		Btulosta = new Button("Tulosta raportti");
+		Lonnistuiko = new Label();
+		
+		kaikki.add(Lchoiceselite, 0, 0);
+		kaikki.add(raportti, 0, 1);
+		//kaikki.add(Ltulosta, 0, 2);
+		//kaikki.add(Ttulosta, 0, 3);
+		kaikki.add(Btulosta, 1, 7);
+		kaikki.add(kalenterivihje, 0, 3);
+		kaikki.add(aloituspaiva, 0, 5);
+		kaikki.add(kalenterivihje2, 0, 6);
+		kaikki.add(lopetuspaiva, 0, 7);
+		kaikki.add(Lonnistuiko, 0, 8);
+	}
+	
+	public void kaleterinluonti(){
+		kalenterivihje = new Label("Valitse ajankohdan aloitusp‰iv‰");
+		//kalenterivihje.setFont(new Font("Arial", 12));
+		//kalenterivihje.setStyle("-fx-padding: 10 0 0 0;");
+		
+		kalenterivihje2 = new Label("Valitse ajankohdan lopetusp‰iv‰");
+		//kalenterivihje2.setFont(new Font("Arial", 12));
+		//kalenterivihje2.setStyle("-fx-padding: 10 0 0 0;");
+		//kalenterivihje.setStyle("-fx-font-weight: bold;");
+		
+		//Luodaan datepickerit aloitus ja lopetusp‰iv‰lle
+		aloituspaiva = new DatePicker();
+		lopetuspaiva = new DatePicker();
+		aloituspaiva.setValue(LocalDate.now());
+		final Callback<DatePicker, DateCell> dayCellFactory = new Callback<DatePicker, DateCell>() {
+			@Override
+			public DateCell call(final DatePicker datePicker) {
+				return new DateCell() {
+					@Override
+					public void updateItem(LocalDate item, boolean empty) {
+						super.updateItem(item, empty);
+
+					}
+				};
+			}
+		};
+		aloituspaiva.setDayCellFactory(dayCellFactory);
+		lopetuspaiva.setDayCellFactory(dayCellFactory);
+		//Asetetaan lopetus p‰iv‰ksi huominen p‰iv‰
+		lopetuspaiva.setValue(aloituspaiva.getValue().plusDays(1));
+
+		//paiva = lopetuspaiva.getValue();
+
+
+		//keski.getChildren().addAll(kalenterivihje,new Label("Valitse aloitusp‰iv‰:"), aloituspaiva, new Label("Valitse lopetusp‰iv‰:"),lopetuspaiva);
+	}
+	public void luoRaportti(){
+		toimipiste_id = 0;
+		RaporttiKanta raporttiOlio = new RaporttiKanta(conn);
+		haeTiedot hintahaku = new haeTiedot(conn);
+		ArrayList<Integer> toimipisteet = new ArrayList<Integer>();
+		ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
+		//ArrayList<String> varaus = new ArrayList<String>();
+		try{
+			toimipiste_id = Integer.parseInt(Ttulosta.getText());
+		}catch (NumberFormatException exception){
+			Lonnistuiko.setText("Id t‰ytyy olla numero");
+		}
+		Date alotus = Date.valueOf(aloituspaiva.getValue());
+		Date lopetus = Date.valueOf(lopetuspaiva.getValue());
+		
+
+		
+		
+		toimipisteet = raporttiOlio.haetaanToimipisteet();
+		
+		try {
+			XWPFDocument document = new XWPFDocument();
+			FileOutputStream out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/test.docx"));
+			
+			XWPFParagraph paragraph = document.createParagraph();
+			XWPFRun run = paragraph.createRun();
+			//run.setText("Toimipiste                                Asiakas                                Pvm                                Summa");
+			run.setText("Majoitukset toimipisteitt‰in "+alotus+" - "+lopetus);
+			run.setBold(true);
+			run.setFontSize(16);
+			paragraph = document.createParagraph();
+			 run = paragraph.createRun();
+			 run.setText("");
+           // XWPFTable tab = document.createTable();
+			XWPFTable table = document.createTable();
+			
+			
+			//rajat pois n‰kyvist‰
+			table.getCTTbl().getTblPr().unsetTblBorders();
+			
+			//Lukitaan taulun koko
+			CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+			type.setType(STTblLayoutType.FIXED);
+			
+            XWPFTableRow row = table.getRow(0); // First row 
+            //tab.getCTTbl().addNewTblPr().addNewTblW().setW(BigInteger.valueOf(10000));
+/*            CTTbl table        = poiTable.getCTTbl();
+            CTTblPr pr         = table.getTblPr();
+            CTTblWidth  tblW = pr.getTblW();
+            tblW.setW(BigInteger.valueOf(5000));
+            tblW.setType(STTblWidth.PCT);
+            pr.setTblW(tblW);
+            table.setTblPr(pr);*/
+            
+
+
+
+
+            
+            
+            
+            //vain yks raja
+            CTTc ctTc = row.getCell(0).getCTTc(); 
+            // here is need to change... 
+            CTTcPr tcPr = ctTc.addNewTcPr();
+            CTTcBorders border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+
+
+            
+            
+            // Columns  
+            row.getCell(0).setText("Toimipiste");
+            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+            //row.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2500));
+            row.setHeight((int)(3000*1/10)); //set height 1/10 inch.
+            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+            
+            
+/*            row.getCell(0).addParagraph().createRun();
+            run.setBold(true);run.setText("Your Text");*/
+            
+     /*       XWPFTableRow rowOne = table.getRow(0);
+            XWPFParagraph paragraph1 = rowOne.getCell(0).addParagraph();
+            setRun(paragraph1.createRun() , 10, row.getCell(0).getText(),true, false);
+            */
+            
+            
+            XWPFTableCell cell = row.getCell(0);
+            CTTblWidth cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            CTTcPr pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(2000));
+            
+            //Tyhj‰ rivi
+            row.addNewTableCell().setText(""); 
+            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+            ctTc = row.getCell(1).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+
+            row.addNewTableCell().setText("Asiakas");             
+            cell = row.getCell(2);
+            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(2000));
+            ctTc = row.getCell(2).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            //tyhj‰ sarake
+            row.addNewTableCell().setText(""); 
+            row.getCell(3).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+            ctTc = row.getCell(3).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            row.addNewTableCell().setText("Pvm");
+            cell = row.getCell(4);
+            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+            pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(1500));
+            ctTc = row.getCell(4).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            
+            //tyhj‰ sarake
+            row.addNewTableCell().setText(""); 
+            row.getCell(5).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(500));
+            ctTc = row.getCell(5).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            
+            row.addNewTableCell().setText("Summa");  
+             cell = row.getCell(6);
+             cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+             pr = cell.getCTTc().addNewTcPr();
+            pr.addNewNoWrap();
+            cellWidth.setW(BigInteger.valueOf(1500));
+            ctTc = row.getCell(6).getCTTc(); 
+            // here is need to change... 
+            tcPr = ctTc.addNewTcPr();
+            border = tcPr.addNewTcBorders();
+            border.addNewBottom().setVal(STBorder.SINGLE);
+            
+            
+            //Otsikkorivin j‰lkeen tyhj‰ rivi
+            row = table.createRow(); // Second Row     
+            row.setHeight((int)(1400*1/10)); //set height 1/10 inch.
+            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+
+            
+            
+
+            
+            
+            
+			for(int i =0; i<toimipisteet.size();i++){
+			System.out.println(toimipisteet.get(i));
+			kaikkiVaraukset = raporttiOlio.haetaanVaraus(toimipisteet.get(i), alotus, lopetus);
+			
+			
+			
+			
+			if(kaikkiVaraukset.size()>0){
+				String toimipiste = kaikkiVaraukset.get(0).get(4);
+	            row = table.createRow();
+	            row.getCell(0).setText(toimipiste); 
+	            
+/*			
+			 paragraph = document.createParagraph();
+			 run = paragraph.createRun();
+			String toimipiste = kaikkiVaraukset.get(0).get(4);
+			run.setText(toimipiste);*/
+			System.out.println("\n\n t‰‰ll‰");
+			}
+			double hintaKaikki = 0;
+			for(int t=0; t<kaikkiVaraukset.size(); t++){
+				
+				
+					int varausid = Integer.parseInt(kaikkiVaraukset.get(t).get(0));
+					String paiva = kaikkiVaraukset.get(t).get(1);
+					String etunimi = kaikkiVaraukset.get(t).get(2);
+					String sukunimi = kaikkiVaraukset.get(t).get(3);
+					
+					
+					
+					double hinta = hintahaku.haetaanHinta(varausid);
+					hintaKaikki +=hinta;
+		            row = table.createRow();
+		            row.getCell(2).setText(etunimi+" "+sukunimi); 
+		            row.getCell(4).setText(paiva);
+		            row.getCell(6).setText(""+hinta);
+					
+				/*	
+					 paragraph = document.createParagraph();
+					 run = paragraph.createRun();
+					run.setText("          "+etunimi+" "+sukunimi+"          "
+							+paiva+"          "+hinta);*/
+				
+			}
+			if(kaikkiVaraukset.size()>0){
+            row = table.createRow();
+            row.getCell(0).setText("Toimipiste yhteens‰"); 
+            row.getCell(6).setText(""+ hintaKaikki);
+            
+            
+            row = table.createRow();
+            row = table.createRow();
+            }
+		}
+		try {
+			document.write(out);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		} catch (FileNotFoundException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
+		
+		
+		if(raportti.getValue()==null){
+			
+		}
+		else if(raportti.getValue().equals("Majoitukset")){
+			majoituksetRaportinLuonti();
+		}else{
+			palvelutRaportinLuonti();
+		}
+	}
+	
+	private static void setRun (XWPFRun run , int fontSize ,String text ,  boolean bold , boolean addBreak) {
+	    run.setFontSize(fontSize);
+	    
+	    run.setText(text);
+	    run.setBold(bold);
+	    if (addBreak) run.addBreak();
+	}
+	
+	
+	public void majoituksetRaportinLuonti(){
+		
+	}
+
+	public void palvelutRaportinLuonti(){
+		
+	}
+	
+	}

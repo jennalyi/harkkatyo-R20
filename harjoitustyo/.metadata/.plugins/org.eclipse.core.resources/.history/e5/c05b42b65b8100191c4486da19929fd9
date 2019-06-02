@@ -1,0 +1,1390 @@
+package harjoitustyo_test;
+
+import javafx.application.Application;
+
+import javafx.geometry.Pos;
+
+import javafx.scene.Scene;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+
+import javafx.scene.layout.BorderPane;
+
+import javafx.scene.layout.GridPane;
+
+import javafx.scene.layout.StackPane;
+
+import javafx.scene.layout.VBox;
+
+import javafx.scene.text.Font;
+
+import javafx.stage.Stage;
+
+import javafx.geometry.Insets;
+
+import javafx.scene.control.TextField; 
+
+import javafx.scene.layout.HBox;
+
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.awt.*;
+
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+
+//import javax.swing.*;
+
+import javax.swing.JOptionPane;
+
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblLayoutType;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblLayoutType;
+
+
+
+
+
+
+
+public class LaskujenHallinta{
+
+
+
+
+
+
+	BorderPane paneelivaraus;
+
+	Button Btakaisin,btnRight,btnRight2,btnRight3,btnRight4,btnRight5,btnRight6, btnRight7;
+
+	Label paaotsikko,joku;
+
+	Stage window;
+	CheckBox maksettu;
+
+	VBox paneelit,vbox,vbox2;
+
+	Scene paasivu;
+
+	TextField textfield,textfield2,textfield3,textfield4,textfield5,textfield6,textfield7,textfield8,textfield9;
+
+	StackPane stackPane;
+
+	HBox hbox;
+
+	Lasku m_lasku = new Lasku();
+
+	boolean lippulasku = false;
+	int laskuid = 0;
+
+	Connection m_conn;
+
+
+	haeTiedot m_tiedot;
+	ChoiceBox<String> laskutyyppi;
+
+
+
+
+
+
+
+
+
+
+	public LaskujenHallinta(BorderPane paneelivaraus, Stage window, Scene paasivu,VBox vbox, Connection m_conn){
+
+		this.paneelivaraus = paneelivaraus;
+
+		this.window = window;
+
+		this.paasivu = paasivu;
+
+		this.vbox = vbox;  
+		this.m_conn = m_conn;
+
+		m_tiedot = new haeTiedot(m_conn);
+
+		window.setTitle("Laskujen hallinta");
+
+
+
+
+
+
+
+
+
+		// tehdään napit ja toiminnot
+
+		btnRight = new Button("Hae lasku");
+
+		btnRight.setOnAction(e -> hae_tiedot());
+
+		btnRight.setPadding(new Insets(25, 25, 25, 25));
+
+		btnRight.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight, new Insets(100, 100, 100, 100));
+
+
+
+
+
+		btnRight2 = new Button("Muuta");
+
+		btnRight2.setOnAction(e -> muuta_tiedot());
+
+		btnRight2.setPadding(new Insets(25, 25, 25, 25));
+
+		btnRight2.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight2, new Insets (100,100, 100, 100));
+
+
+
+
+
+		btnRight3 = new Button("Lisää");
+
+		btnRight3.setOnAction(e -> lisaa_tiedot());
+
+		btnRight3.setPadding(new Insets(25, 25, 25, 25));
+
+		btnRight3.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight3, new Insets(100, 100, 100, 100));
+
+
+
+		btnRight4 = new Button("Poista");
+
+		btnRight4.setOnAction(e -> poista_tiedot());
+
+		btnRight4.setPadding(new Insets(25,25, 25,25));
+
+		btnRight4.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight4, new Insets(100, 100, 100, 100));
+
+
+
+		btnRight5 = new Button("Tyhjennä");
+
+		btnRight5.setOnAction((e) ->{ 
+
+			textfield.setText("");
+
+			textfield2.setText("");
+
+			textfield3.setText("");
+
+			textfield4.setText("");
+
+			textfield5.setText("");
+
+			textfield6.setText("");
+
+			textfield7.setText("");
+
+			textfield8.setText("");
+
+			textfield9.setText(""); 
+			maksettu.setSelected(false);
+			lippulasku = false;
+			laskutyyppi.setValue(null);});
+
+		btnRight5.setPadding(new Insets(25, 25, 25, 25));
+
+		btnRight5.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight5, new Insets(100, 100, 100, 100));
+
+
+
+		btnRight6 = new Button("Hae varaus");
+
+		btnRight6.setOnAction(e -> hae_tiedot2());
+
+		btnRight6.setPadding(new Insets(25,25, 25,25));
+
+		btnRight6.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight4, new Insets(100, 100, 100, 100));
+
+
+
+		btnRight7 = new Button("Lähetä lasku");
+
+		btnRight7.setOnAction(e -> lahetaLasku());
+
+		btnRight7.setPadding(new Insets(25,25, 25,25));
+
+		btnRight7.setMaxWidth(120);
+
+		BorderPane.setMargin(btnRight7, new Insets(100, 100, 100, 100));
+
+
+
+
+		//lisätään napit vboxiin
+
+		vbox.getChildren().addAll(btnRight,btnRight6,btnRight2,btnRight3,btnRight4,btnRight5,btnRight7);
+
+
+
+
+
+		paneelivaraus.setRight(vbox);
+
+
+
+
+
+
+
+
+
+		Btakaisin = new Button("takaisin");
+		Btakaisin.setMaxWidth(100);
+		Btakaisin.setMaxHeight(60);
+		Btakaisin.setPadding(new Insets(5,5, 5,5));
+		paneelivaraus.setBottom(Btakaisin);
+		paneelivaraus.setPadding(new Insets(0,5, 15,5));
+		// nappi joka vie takaisin pääsivulle
+		Btakaisin.setOnAction(e -> takaisin());
+
+
+
+
+
+		//tehdään tekstikentät
+
+
+		textfield = new TextField();
+
+		//textfield.setPadding(new Insets(25, 25, 25,0));
+
+		//textfield.setMaxWidth(150);
+
+		//textfield.setMaxHeight(5);
+
+		//BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));
+
+
+
+		textfield2 = new TextField();
+
+		/*textfield2.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield2, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield3 = new TextField();
+
+		/* textfield3.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield4 = new TextField();
+
+		/* textfield4.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield5 = new TextField();
+
+		/* textfield5.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield6 = new TextField();
+
+		/*textfield6.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield7 = new TextField();
+
+		/* textfield7.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield8 = new TextField();
+
+		/*textfield8.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+
+
+		textfield9 = new TextField();
+
+		/* textfield9.setPadding(new Insets(25, 25, 25,0));
+
+        BorderPane.setMargin(textfield, new Insets(10, 10, 10, 0));*/
+
+		//tehdään labelit tekstikenttiin
+
+		Label label1 = new Label("Lasku_ID");
+
+
+
+		Label label2 = new Label("Varaus_ID");
+
+		Label label3 = new Label("Asiakas_ID");
+
+		Label label4 = new Label("Nimi:");
+
+		Label label5 = new Label("Lahiosoite:");
+
+		Label label6 = new Label("Postitoimipaikka:");
+
+
+
+		Label label7 = new Label("Postinumero:");
+
+
+
+		Label label8 = new Label("Summa:");
+
+
+
+		Label label9 = new Label("ALV:");
+
+
+
+		VBox vbox2 = new VBox();
+
+		vbox2.setMaxHeight(5);
+
+
+		maksettu = new CheckBox("Lasku maksettu");
+
+		Label vali = new Label("");
+		Label vali2 = new Label("");
+		Label Lchoiceselite = new Label("Valitse laskuntyyppi:");
+		laskutyyppi = new ChoiceBox <String>();
+		laskutyyppi.getItems().addAll("Paperilasku", "Sähköpostilasku");
+
+		vbox2.getChildren().addAll(label1,textfield,label2,textfield2,label3,textfield3,label4,textfield4,label5,textfield5,
+
+				label6,textfield6,label7,
+
+				textfield7,label8,textfield8,label9,textfield9, vali, maksettu
+				,vali2, Lchoiceselite, laskutyyppi);
+
+
+
+		paneelivaraus.setLeft(vbox2);
+
+		vbox2.setPadding(new Insets(0,0,0,25));
+		vbox.setPadding(new Insets(0,25,0,0));
+
+
+
+
+
+
+
+
+	}
+	//Palataan takaisin pääsivulle
+	public void takaisin(){
+		window.setTitle("Mökki varausjärjestelmä");
+		window.setScene(paasivu);
+
+	}
+
+
+	public void lahetaLasku(){
+		int varausid = 0;
+		try {
+			varausid = Integer.parseInt(textfield2.getText());
+			laskuid = Integer.parseInt(textfield.getText());
+
+		} catch (Exception se) {  JOptionPane.showMessageDialog(null, "Varausta ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+
+		}
+		
+		if(laskutyyppi.getValue()==null){
+			JOptionPane.showMessageDialog(null, "Valitse laskutyyppi");
+			//Tulostetaan paperilasku
+		}else if(laskutyyppi.getValue().equals("Paperilasku")&&lippulasku){
+			ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
+			//Blank Document
+			XWPFDocument document = new XWPFDocument(); 
+
+			//Write the Document in file system
+			FileOutputStream out;
+			try {
+				out = new FileOutputStream(new File("C:/Users/Joona/Desktop/Koulutuot/ohjtuottest/paperilasku.docx"));
+				
+				
+				//Osoite tiedot
+
+/*				run.setText("GOAL!!!");
+				XmlCursor cursor = paragraph.getCTP().newCursor();//this is the key!
+				XWPFTable t2 = document.insertNewTbl(cursor);
+				XWPFTableCell cell1 = t2.getRow(0).getCell(0);
+				cell1.setText("GOAL!!!");*/
+				
+				//run.seth
+				///paragraph.setAlignment(CENTER);
+				//Osoite tiedot
+				XWPFParagraph paragraph = document.createParagraph();
+				XWPFRun run = paragraph.createRun();
+				//paragraph.setSpacingBetween(0.5);
+				run.setText(textfield4.getText());
+				run.addBreak();
+				run.setText(textfield5.getText());
+				run.addBreak();
+				run.setText(textfield7.getText() +" "+textfield6.getText());
+
+				
+				
+				 paragraph = document.createParagraph();
+				 run = paragraph.createRun();
+				//paragraph.setSpacingBetween(0.5);
+				run.setText("LASKU "+ laskuid);
+				run.setBold(true);
+				run.setTextPosition(20);
+				run.setFontSize(14);
+				run.addBreak();
+				run.setText(""+ LocalDate.now());
+				paragraph.setAlignment(ParagraphAlignment.CENTER);
+				
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				
+				XWPFTable table = document.createTable();
+				setTableAlign(table, ParagraphAlignment.CENTER);
+				
+				
+				//rajat pois näkyvistä
+				table.getCTTbl().getTblPr().unsetTblBorders();
+				//Lukitaan taulun koko
+				CTTblLayoutType type = table.getCTTbl().getTblPr().addNewTblLayout();
+				type.setType(STTblLayoutType.FIXED);
+				XWPFTableRow row = table.getRow(0); // First row 
+				
+	            XWPFTableCell cell = row.getCell(0);
+	            CTTblWidth cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	            CTTcPr pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(2000));
+	            
+	            
+	            //vain yks raja
+	            CTTc ctTc = row.getCell(0).getCTTc(); 
+	            // here is need to change... 
+	            CTTcPr tcPr = ctTc.addNewTcPr();
+	            CTTcBorders border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+
+	            
+	            // Columns  
+	            row.getCell(0).setText("Mökin nimi");
+	            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+	            //row.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2500));
+	            row.setHeight((int)(3000*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+	            
+	            
+	            //Tyhjä rivi
+	            row.addNewTableCell().setText(""); 
+	            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(200));
+	            ctTc = row.getCell(1).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+
+	            row.addNewTableCell().setText("Hinta");             
+	            cell = row.getCell(2);
+	            cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	            pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(800));
+	            ctTc = row.getCell(2).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            
+	            
+	            //Otsikkorivin jälkeen tyhjä rivi
+	            row = table.createRow(); // Second Row     
+	            row.setHeight((int)(1400*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+				
+				ArrayList<String> palautus = new ArrayList<String>();
+	            m_tiedot.haetaanHinta(varausid);
+				palautus = m_tiedot.mokkiTiedot(varausid);
+				palautus.get(0);
+				palautus.get(1);
+				
+				if(palautus.size()>0){
+					
+		            row = table.createRow();
+		            row.getCell(0).setText(palautus.get(0)); 
+
+		            
+		            row.getCell(2).setText(palautus.get(1));
+				}
+				
+				row = table.createRow();
+				row = table.createRow();
+	            row.getCell(0).setText("Palvelun nimi"); 
+	            row.getCell(2).setText("Hinta");
+	            //vain yks raja
+	             ctTc = row.getCell(0).getCTTc(); 
+	            // here is need to change... 
+	             tcPr = ctTc.addNewTcPr();
+	             border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            //vain yks raja
+	             ctTc = row.getCell(2).getCTTc(); 
+	            // here is need to change... 
+	             tcPr = ctTc.addNewTcPr();
+	             border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	             ctTc = row.getCell(1).getCTTc(); 
+	            // here is need to change... 
+	             tcPr = ctTc.addNewTcPr();
+	             border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+	            //row.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2500));
+	            row.setHeight((int)(3000*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+	            
+	            
+	            kaikkiVaraukset = m_tiedot.haetaanPalvelut(varausid);
+	            row = table.createRow();
+	            row.setHeight((int)(1400*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+	            
+				for(int t=0; t<kaikkiVaraukset.size(); t++){
+		            row = table.createRow();
+		            row.getCell(0).setText(kaikkiVaraukset.get(t).get(0)); 
+		            row.getCell(2).setText(kaikkiVaraukset.get(t).get(1));
+				}
+				
+	            
+				row = table.createRow();
+				row = table.createRow();
+				row = table.createRow();
+				
+				paragraph = document.createParagraph();
+				run = paragraph.createRun();
+				run.setText("VILLAGE PEOPLE OY");
+				run.setBold(true);
+				//run.setFontSize(14);
+			
+				
+				 table = document.createTable();
+				 setTableAlign(table, ParagraphAlignment.CENTER);
+				//Lukitaan taulun koko
+				 type = table.getCTTbl().getTblPr().addNewTblLayout();
+				type.setType(STTblLayoutType.FIXED);
+				 row = table.getRow(0); // First row 
+				
+	             cell = row.getCell(0);
+	             cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	             pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(2000));
+
+	            // Columns  
+	            row.getCell(0).setText("Tilinumero");
+	            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+	            //row.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2500));
+	            row.setHeight((int)(4000*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+	            
+	            
+	            //Tyhjä rivi
+	            row.addNewTableCell().setText("FI21 08089 8080 8080 21"); 
+	            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(4000));
+	            ctTc = row.getCell(1).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            row = table.createRow();
+	            row.getCell(0).setText("Viitenumero");
+	            row.getCell(1).setText(""+1000+varausid);
+	            
+	            
+	            document.createParagraph().createRun();
+	            
+	            
+	            //run.setFontSize(14);
+	            //HINTA SUN MUUT
+				 table = document.createTable();
+				 
+				 setTableAlign(table, ParagraphAlignment.CENTER);
+				 
+				//Lukitaan taulun koko
+				 type = table.getCTTbl().getTblPr().addNewTblLayout();
+				type.setType(STTblLayoutType.FIXED);
+				 row = table.getRow(0); // First row 
+				
+	             cell = row.getCell(0);
+	             cellWidth = cell.getCTTc().addNewTcPr().addNewTcW();
+	             pr = cell.getCTTc().addNewTcPr();
+	            pr.addNewNoWrap();
+	            cellWidth.setW(BigInteger.valueOf(1000));
+
+	            // Columns  
+	            row.getCell(0).setText("Eräpäivä");
+	            row.getCell(0).setVerticalAlignment(XWPFVertAlign.BOTTOM);
+	            //row.getCell(0).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2500));
+	            row.setHeight((int)(4000*1/10)); //set height 1/10 inch.
+	            row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
+	            
+	            
+	            //Tyhjä rivi
+	            row.addNewTableCell().setText(""+LocalDate.now().plusDays(14)); 
+	            row.getCell(1).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2000));
+	            ctTc = row.getCell(1).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            row.addNewTableCell().setText("Hinta");             
+	            row.getCell(2).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(1000));
+	            ctTc = row.getCell(2).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+	            
+	            
+	            row.addNewTableCell().setText(""+m_tiedot.haetaanHinta(varausid));             
+	            row.getCell(3).getCTTc().addNewTcPr().addNewTcW().setW(BigInteger.valueOf(2000));
+	            ctTc = row.getCell(3).getCTTc(); 
+	            // here is need to change... 
+	            tcPr = ctTc.addNewTcPr();
+	            border = tcPr.addNewTcBorders();
+	            border.addNewBottom().setVal(STBorder.SINGLE);
+				
+				
+				
+				
+				
+				
+				
+				
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+
+/*	            XWPFTable tableOne = document.createTable(2,2);
+	            XWPFTableRow tablerow = tableOne.getRow(0);
+	            tablerow.getCell(0).setText("Test");
+	            tablerow.getCell(1).setText("Test");
+
+	            tablerow = tableOne.getRow(1);
+	            tablerow.getCell(0).setText("Test");
+
+	             paragraph = tablerow.getCell(1).getParagraphArray(0);
+	            XWPFTable tableTwo = tablerow.getCell(1).insertNewTbl(paragraph.getCTP().newCursor());
+
+	            tableTwo.getCTTbl().addNewTblPr().addNewTblBorders().addNewLeft().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+	            tableTwo.getCTTbl().getTblPr().getTblBorders().addNewRight().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+	            tableTwo.getCTTbl().getTblPr().getTblBorders().addNewTop().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+	            tableTwo.getCTTbl().getTblPr().getTblBorders().addNewBottom().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+	            tableTwo.getCTTbl().getTblPr().getTblBorders().addNewInsideH().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+	            tableTwo.getCTTbl().getTblPr().getTblBorders().addNewInsideV().setVal(
+	             org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder.SINGLE);
+
+	            tablerow = tableTwo.createRow();
+	            tablerow.createCell().setText("aaaaaaaaaa");
+	            tablerow.createCell().setText("jjjjjjjj"); */
+
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+	            
+				
+				
+	            
+	            
+				try {
+					document.write(out);
+					out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			System.out.println("createparagraph.docx written successfully");
+
+
+
+
+
+
+
+			//Tulostetaan sähköposti lasku
+		}else if (laskutyyppi.getValue().equals("Sähköpostilasku")&&lippulasku){
+			
+		}else{
+			JOptionPane.showMessageDialog(null, "Hae tai lisää lasku, jotta voit lähettää sen");
+		}
+	}
+
+
+
+
+	// haetaan asiakkaan tiedot varaus_idn avulla ilman että laskua on tehty
+	public void hae_tiedot2(){
+		int varausid = 0;
+		ArrayList<String> palautus = new ArrayList<String>();
+
+		try {
+			varausid = Integer.parseInt(textfield2.getText());
+
+
+			//haku
+			palautus = m_tiedot.haetaanAsiakas (varausid);
+
+		} catch (Exception se) {  JOptionPane.showMessageDialog(null, "Varausta ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+
+		}
+
+
+
+
+		//katotaan onnistuiko haku
+
+		if(palautus.isEmpty()==false){
+
+
+
+			String asiakas_id= palautus.get(0);
+
+			String etunimi= palautus.get(1);
+
+			String sukunimi= palautus.get(2);
+
+			String lahiosoite= palautus.get(3);
+
+			String postitoimipaikka= palautus.get(4);
+
+			String postinro= palautus.get(5);
+
+
+
+			textfield3.setText(asiakas_id);
+
+			textfield4.setText(etunimi +" "+sukunimi);
+
+			textfield5.setText(lahiosoite);
+
+			textfield6.setText(postitoimipaikka);
+
+			textfield7.setText(postinro);
+
+			//haku
+			double summa = m_tiedot.haetaanHinta (varausid);
+			textfield8.setText(""+summa);
+			textfield9.setText(""+m_tiedot.getAlv());
+
+
+
+
+		}else{ 
+			textfield.setText("");
+
+			textfield2.setText("");
+
+			textfield3.setText("");
+
+			textfield4.setText("");
+
+			textfield5.setText("");
+
+			textfield6.setText("");
+
+			textfield7.setText("");
+
+			textfield8.setText("");
+
+			textfield9.setText(""); 
+
+
+			JOptionPane.showMessageDialog(null, "varausta ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE); 
+
+
+
+		}
+
+
+		//ilmoita käyttäjälle ei onnistunnut 
+
+	}
+
+	public void setTableAlign(XWPFTable table,ParagraphAlignment align) {
+	    CTTblPr tblPr = table.getCTTbl().getTblPr();
+	    CTJc jc = (tblPr.isSetJc() ? tblPr.getJc() : tblPr.addNewJc());
+	    STJc.Enum en = STJc.Enum.forInt(align.getValue());
+	    jc.setVal(en);
+	}
+
+
+	/*
+
+	Haetaan tietokannasta asiakkaan tiedot näytöllä olevan opiskelijaid:n perusteella ja näytetään tiedot lomakkeella
+
+	 */
+
+	public  void hae_tiedot() {
+
+		// haetaan tietokannasta opiskelijaa, jonka opiskelija_id = txtOpiskelijaID 
+
+		m_lasku = null;
+
+
+
+		try {
+
+			m_lasku = Lasku.haeLasku (m_conn, Integer.parseInt(textfield.getText()));
+
+		} catch (SQLException se) {
+
+			// SQL virheet
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+		} catch (Exception e) {
+
+			// muut virheet
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy."+e.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+		}
+
+		if (m_lasku.getVarausId() == 0) {
+
+			// muut virheet
+
+			textfield.setText("");
+
+			textfield2.setText("");
+
+			textfield3.setText("");
+
+			textfield4.setText("");
+
+			textfield5.setText("");
+
+			textfield6.setText("");
+
+			textfield7.setText("");
+
+			textfield8.setText("");
+
+			textfield9.setText("");
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+		}
+
+		else
+
+		{
+			lippulasku = true;
+			// naytetaan tiedot
+
+			//textfield.setText(m_lasku.getLaskuId());
+
+			textfield2.setText(""+m_lasku.getVarausId());
+
+			textfield3.setText(""+m_lasku.getAsiakasId());
+
+			textfield4.setText(m_lasku.getNimi());
+
+			textfield5.setText(m_lasku.getLahiosoite());
+
+			textfield6.setText(m_lasku.getPostitoimipaikka());
+
+			textfield7.setText(m_lasku.getPostinro());
+
+			textfield8.setText(""+m_lasku.getSumma());
+
+			textfield9.setText(""+m_lasku.getAlv());
+
+			maksettu.setSelected(m_lasku.getMaksettu());
+
+		}
+
+
+
+	}
+
+	/*
+
+	Viedään näytöllä olevat tiedot oliolle ja kirjoitetaan ne tietokantaan
+
+	 */
+
+	public  void lisaa_tiedot() {
+
+		// lisätään tietokantaan lasku
+
+
+
+		boolean lasku_lisatty = true;
+
+
+		if(textfield4.getText().equals("")||textfield5.getText().equals("")||textfield6.getText().equals("")||textfield7.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "Kaikki tekstikentät ovat pakollisia" );
+		}else{
+		try {
+
+			m_lasku = Lasku.haeLasku (m_conn, Integer.parseInt(textfield.getText()));
+
+		} catch (SQLException se) {
+
+			// SQL virheet
+
+			lasku_lisatty = false;
+
+			JOptionPane.showMessageDialog(null, "Tietokantavirhe.", "Tietokantavirhe"+se.getMessage(), JOptionPane.ERROR_MESSAGE);
+
+		} catch (Exception e) {
+
+			// muut virheet
+
+			lasku_lisatty = false;
+
+			JOptionPane.showMessageDialog(null, "Tietokantavirhe.", "Tietokantavirhe"+e.getMessage(), JOptionPane.ERROR_MESSAGE);
+
+		}
+
+		if (m_lasku.getVarausId() != 0) {
+
+			// lasku jo olemassa, näytetään tiedot
+
+			lasku_lisatty = false;
+
+			//textfield.setText(m_lasku.getLaskuId());
+
+			textfield2.setText(""+m_lasku.getVarausId());
+
+			textfield3.setText(""+m_lasku.getAsiakasId());
+
+			textfield4.setText(m_lasku.getNimi());
+
+			textfield5.setText(m_lasku.getLahiosoite());
+
+			textfield6.setText(m_lasku.getPostitoimipaikka());
+
+			textfield7.setText(m_lasku.getPostinro());
+
+			textfield8.setText(""+m_lasku.getSumma());
+
+			textfield9.setText(""+m_lasku.getAlv());
+			maksettu.setSelected(m_lasku.getMaksettu());
+
+
+			JOptionPane.showMessageDialog(null, "Lasku on jo olemassa.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+		}
+
+		else
+
+		{
+
+			// asetetaan tiedot oliolle
+
+			try {
+
+				lippulasku = true;
+				m_lasku.setLaskuId(Integer.parseInt(textfield.getText()));
+
+				m_lasku.setVarausId(Integer.parseInt(textfield2.getText()));
+
+				m_lasku.setAsiakasId(Integer.parseInt(textfield3.getText()));
+
+				m_lasku.setNimi(textfield4.getText());
+
+				m_lasku.setLahiosoite(textfield5.getText());
+
+				m_lasku.setPostitoimipaikka(textfield6.getText());
+
+				m_lasku.setPostinro(textfield7.getText());
+
+				m_lasku.setSumma(Double.parseDouble(textfield8.getText()));
+
+
+
+				m_lasku.setAlv(Double.parseDouble(textfield9.getText()));
+				m_lasku.setMaksettu(maksettu.isSelected());
+
+			} catch (NumberFormatException exception) {
+
+				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+exception.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+				exception.printStackTrace();
+
+
+			}
+
+			try {
+
+				// yritetään kirjoittaa kantaan
+
+				m_lasku.lisaaLasku (m_conn);
+
+			} catch (SQLException se) {
+
+				// SQL virheet
+
+				lasku_lisatty = false;
+
+				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+se.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+				se.printStackTrace();
+
+			} catch (Exception e) {
+
+				// muut virheet
+
+				lasku_lisatty = false;
+
+				JOptionPane.showMessageDialog(null, "Laskun lisaaminen ei onnistu."+e.getMessage(), "Virhe", JOptionPane.ERROR_MESSAGE);
+
+				e.printStackTrace();
+
+			}finally {
+
+				if (lasku_lisatty == true)
+
+					JOptionPane.showMessageDialog(null, "laskun tiedot lisatty tietokantaan.");
+
+			}
+
+
+
+		}
+
+		}
+
+	}
+
+	/*
+
+	Viedään näytöllä olevat tiedot oliolle ja muutetaan ne tietokantaan
+
+	 */
+
+	public  void muuta_tiedot() {
+
+
+
+		boolean lasku_muutettu = true;
+
+		if(textfield4.getText().equals("")||textfield5.getText().equals("")||textfield6.getText().equals("")||textfield7.getText().equals("")){
+			JOptionPane.showMessageDialog(null, "Kaikki tekstikentät ovat pakollisia" );
+		}else{
+		// asetetaan tiedot oliolle
+
+		//m_lasku.setLaskuId(Integer.parseInt(textfield.getText()));
+		try {
+
+			m_lasku.setVarausId(Integer.parseInt(textfield2.getText()));
+
+			m_lasku.setAsiakasId(Integer.parseInt(textfield3.getText()));
+
+			m_lasku.setNimi(textfield4.getText());
+
+			m_lasku.setLahiosoite(textfield5.getText());
+
+			m_lasku.setPostitoimipaikka(textfield6.getText());
+
+			m_lasku.setPostinro(textfield7.getText());
+
+			m_lasku.setSumma(Double.parseDouble(textfield8.getText()));
+
+
+
+			m_lasku.setAlv(Double.parseDouble(textfield9.getText()));
+			m_lasku.setMaksettu(maksettu.isSelected());
+
+		} catch (NumberFormatException exception) {
+
+			JOptionPane.showMessageDialog(null, "Laskun tietojen muuttaminen ei onnistu."+exception.getMessage(), "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+		}
+
+
+
+
+		try {
+
+			// yritetään muuttaa (UPDATE) tiedot kantaan
+
+			m_lasku.muutaLasku (m_conn);
+
+		} catch (SQLException se) {
+
+			// SQL virheet
+
+			lasku_muutettu = false;
+
+			JOptionPane.showMessageDialog(null, "Laskun tietojen muuttaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+			//se.printStackTrace();
+
+		} catch (Exception e) {
+
+			// muut virheet
+
+			lasku_muutettu = false;
+
+			JOptionPane.showMessageDialog(null, "Laskun tietojen muuttaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+			// e.printStackTrace();
+
+		} finally {
+
+			if (lasku_muutettu == true)
+
+				JOptionPane.showMessageDialog(null, "Laskun tiedot muutettu.");
+
+		}
+
+		}
+
+	}
+
+	public  void poista_tiedot() {
+
+		// haetaan tietokannasta laskua, jonka lasku_id = textfield 
+
+		m_lasku = null;
+
+		boolean lasku_poistettu = false;
+		lippulasku = false;
+
+
+		try {
+
+			m_lasku = Lasku.haeLasku (m_conn, Integer.parseInt(textfield.getText()));
+
+		} catch (SQLException se) {
+
+			// SQL virheet
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+		} catch (Exception e) {
+
+			// muut virheet
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+		}
+
+		if (m_lasku.getLaskuId() == 0) {
+
+			// poistettavaa laskua ei löydy tietokannasta, tyhjennetään tiedot näytöltä
+
+			textfield.setText("");
+
+			textfield2.setText("");
+
+			textfield3.setText("");
+
+			textfield4.setText("");
+
+			textfield5.setText("");
+
+			textfield6.setText("");
+
+			textfield7.setText("");
+
+			textfield8.setText("");
+
+			textfield9.setText("");
+			maksettu.setSelected(false);
+
+			JOptionPane.showMessageDialog(null, "Laskua ei loydy.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+			return; // poistutaan
+
+		}
+
+		else
+
+		{
+
+			// naytetaan poistettavan asiakkaan tiedot
+
+			// textfield.setText(m_lasku.getLaskuId());
+
+			textfield2.setText(""+m_lasku.getVarausId());
+
+			textfield3.setText(""+m_lasku.getAsiakasId());
+
+			textfield4.setText(m_lasku.getNimi());
+
+			textfield5.setText(m_lasku.getLahiosoite());
+
+			textfield6.setText(m_lasku.getPostitoimipaikka());
+
+			textfield7.setText(m_lasku.getPostinro());
+
+			textfield8.setText(""+m_lasku.getSumma());
+
+			textfield9.setText(""+m_lasku.getAlv());
+			maksettu.setSelected(m_lasku.getMaksettu());
+
+
+		}
+
+		try {
+
+			if (JOptionPane.showConfirmDialog(null, "Haluatko todella poistaa laskun?")==0) {// vahvistus ikkunassa
+
+				m_lasku.poistaLasku (m_conn);
+
+				lasku_poistettu = true;
+
+			}
+
+		} catch (SQLException se) {
+
+			// SQL virheet
+
+			JOptionPane.showMessageDialog(null, "Laskun tietojen poistaminen ei onnistu.", "Tietokantavirhe", JOptionPane.ERROR_MESSAGE);
+
+			// se.printStackTrace();
+
+		} catch (Exception e) {
+
+			// muut virheet
+
+			JOptionPane.showMessageDialog(null, "Laskun tietojen poistaminen ei onnistu.", "Virhe", JOptionPane.ERROR_MESSAGE);
+
+			// e.printStackTrace();
+
+		} finally {
+
+			if (lasku_poistettu == true) { // ainoastaan, jos vahvistettiin ja poisto onnistui
+
+				textfield.setText("");
+
+				textfield2.setText("");
+
+				textfield3.setText("");
+
+				textfield4.setText("");
+
+				textfield5.setText("");
+
+				textfield6.setText("");
+
+				textfield7.setText("");
+
+				textfield8.setText("");
+
+				textfield9.setText("");
+				maksettu.setSelected(false);
+
+				JOptionPane.showMessageDialog(null, "Laskun tiedot poistettu tietokannasta.");
+
+				m_lasku = null;
+
+			}
+
+		}
+
+	}
+
+
+
+}
+
+
+
+

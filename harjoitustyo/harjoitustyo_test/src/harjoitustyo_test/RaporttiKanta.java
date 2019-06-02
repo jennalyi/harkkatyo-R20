@@ -1,3 +1,7 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -7,6 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/*
+ * Haetaan tietoja kannasta raporttia varten
+ */
 public class RaporttiKanta {
 	Connection conn;
 	Date aloituspaiva;
@@ -17,7 +24,7 @@ public class RaporttiKanta {
 	public RaporttiKanta(Connection conn){
 		this.conn = conn;
 	}
-	//Haetaan varaus
+	//Haetaan varaukset tiettyltä aikaväliltä toimipisteen perusteella
 	public ArrayList<ArrayList<String>> haetaanVaraus(int id, Date aloituspaiva, Date lopetuspaiva){
 		String sql = "SELECT v.varaus_id, v.varattu_pvm, a.etunimi, a.sukunimi , t.nimi"   
 				+ " FROM Varaus AS v, Asiakas AS A, Toimipiste AS t"
@@ -27,8 +34,7 @@ public class RaporttiKanta {
 					+" OR (v.varattu_loppupvm between ? AND ? ))" ; // ehdon arvo asetetaan jäljempänä
 		ResultSet tulosjoukko = null;
 		PreparedStatement lause = null;
-		//Luodaan olio, jonka avulla voidaan palauttaa haetut tiedot
-		//VarausTiedot varausolio = new VarausTiedot();
+		//Luodaan arraylistit, joiden avulla voidaan palauttaa haetut tiedot
 		ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
 		ArrayList<String> varaus = new ArrayList<String>();
 		try {
@@ -43,10 +49,12 @@ public class RaporttiKanta {
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
 			
-				//Haetaan tuloksesta tiedot ja asetetaan ne varausolio olioon
+				
 			int i = 0;	
+			
+			//Asetetaan haun tuloksista varaus arraylistiin aina yksi rivi, joka 
+			//taas asetetaan kaikkiVaraukset arraylistiin
 			while (tulosjoukko.next () == true){
-					System.out.println("Tulosjoukko");
 					i++;
 					varaus = new ArrayList<String>();
 					varaus.add(""+tulosjoukko.getInt("v.varaus_id"));
@@ -58,6 +66,7 @@ public class RaporttiKanta {
 					kaikkiVaraukset.add(varaus);
 
 				}
+				//suljetaan yhteydet
 				lause.close();
 				tulosjoukko.close();
 			
@@ -68,11 +77,11 @@ public class RaporttiKanta {
 			// JDBC virheet
 			e.printStackTrace();
 		}
-		//palautetaan varausolio
+		//palautetaan arraylisti
 		return kaikkiVaraukset;
 	}//haetaanVaraus
 	
-	//Haetaan kannasta toimipisteet nimi 
+	//Haetaan kannasta kaikkien toimipisteiden tunnukset
 	public ArrayList<Integer> haetaanToimipisteet(){
 		String sql = "SELECT toimipiste_id " 
 				+ " FROM Toimipiste"; // ehdon arvo asetetaan jäljempänä
@@ -84,11 +93,10 @@ public class RaporttiKanta {
 		try {
 			// luo PreparedStatement-olio sql-lauseelle
 			lause = conn.prepareStatement(sql);
-			//lause.setInt( 1, id); // asetetaan where ehtoon (?) arvo
 			// suorita sql-lause
 			tulosjoukko = lause.executeQuery();	
 			
-			//Jos löydetään tuloksia
+			//Jos löydetään tuloksia asetetaan ne yksitellen arraylistiin
 			while(tulosjoukko.next () == true){
 				toimipisteet.add(tulosjoukko.getInt("toimipiste_id"));
 				
@@ -103,7 +111,67 @@ public class RaporttiKanta {
 			// JDBC virheet
 			e.printStackTrace();
 		}
-
+		//Palautetaan arraylist
 		return toimipisteet;
-	}//haetaanAsiakas
+	}//haetaanToimipisteet
+	
+	//Haetaan varaukset tiettyltä aikaväliltä toimipisteen perusteella. 
+	//Erona haetaanVaraus metodiin se että palautetaan varauksen aloitus  ja lopetus päivät
+	public ArrayList<ArrayList<String>> haetaanVaraus2(int id, Date aloituspaiva, Date lopetuspaiva){
+		String sql = "SELECT v.varaus_id, v.varattu_alkupvm, v.varattu_loppupvm , a.etunimi, a.sukunimi , t.nimi"   
+				+ " FROM Varaus AS v, Asiakas AS A, Toimipiste AS t"
+				+" WHERE v.asiakas_id = a.asiakas_id AND v.toimipiste_id = t.toimipiste_id AND"
+				+ " v.toimipiste_id = ? "			 
+				 +" AND ((v.varattu_alkupvm between ? AND ? )"  
+					+" OR (v.varattu_loppupvm between ? AND ? ))" ; // ehdon arvo asetetaan jäljempänä
+		ResultSet tulosjoukko = null;
+		PreparedStatement lause = null;
+		//Luodaan arraylistit, joiden avulla voidaan palauttaa haetut tiedot
+		ArrayList<ArrayList<String>> kaikkiVaraukset = new ArrayList<ArrayList<String>>();
+		ArrayList<String> varaus = new ArrayList<String>();
+		try {
+			// luo PreparedStatement-olio sql-lauseelle
+			lause = conn.prepareStatement(sql);
+			lause.setInt( 1, id); 
+			lause.setDate(2, aloituspaiva);
+			lause.setDate(3, lopetuspaiva);
+			lause.setDate(4, aloituspaiva);
+			lause.setDate(5, lopetuspaiva);
+
+			// suorita sql-lause
+			tulosjoukko = lause.executeQuery();	
+			
+				
+			int i = 0;	
+			
+			//Asetetaan haun tuloksista varaus arraylistiin aina yksi rivi, joka 
+			//taas asetetaan kaikkiVaraukset arraylistiin
+			while (tulosjoukko.next () == true){
+					i++;
+					varaus = new ArrayList<String>();
+					varaus.add(""+tulosjoukko.getInt("v.varaus_id"));
+					varaus.add(""+tulosjoukko.getDate("v.varattu_alkupvm"));
+					varaus.add(""+tulosjoukko.getDate("v.varattu_loppupvm"));
+					varaus.add(tulosjoukko.getString("a.etunimi"));
+					varaus.add(tulosjoukko.getString("a.sukunimi"));
+					varaus.add(tulosjoukko.getString("t.nimi"));
+					
+					kaikkiVaraukset.add(varaus);
+
+				}
+				//suljetaan yhteydet
+				lause.close();
+				tulosjoukko.close();
+			
+		} catch (SQLException se) {
+			// SQL virheet
+			se.printStackTrace();
+		} catch (Exception e) {
+			// JDBC virheet
+			e.printStackTrace();
+		}
+		//palautetaan arraylisti
+		return kaikkiVaraukset;
+	}//haetaanVaraus
+	
 }

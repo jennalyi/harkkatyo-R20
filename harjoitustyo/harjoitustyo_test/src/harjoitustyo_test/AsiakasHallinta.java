@@ -80,7 +80,7 @@ import javax.swing.JOptionPane;
     this.vbox = vbox;  
     this.m_conn = m_conn;
 
-
+    window.setTitle("Asiakas hallinta");
 
 
 
@@ -114,7 +114,7 @@ import javax.swing.JOptionPane;
 
 
 
-          btnRight3 = new Button("Lisaa");
+          btnRight3 = new Button("Lisää");
 
   				btnRight3.setPadding(new Insets(30, 30, 30, 30));
   				
@@ -138,7 +138,7 @@ import javax.swing.JOptionPane;
 
 
 
-  				btnRight5 = new Button("Tyhjenna");
+  				btnRight5 = new Button("Tyhjennä");
   				
   				btnRight5.setOnAction((e) ->{ 
   					
@@ -193,14 +193,14 @@ import javax.swing.JOptionPane;
 
           
 
-          Btakaisin = new Button("takaisin");
+          Btakaisin = new Button("Takaisin");
 
           Btakaisin.setMaxWidth(100);
           Btakaisin.setMaxHeight(30);
           Btakaisin.setPadding(new Insets(5,5, 5,5));
           paneelivaraus.setBottom(Btakaisin);
           paneelivaraus.setPadding(new Insets(5,5, 5,5));
-          Btakaisin.setOnAction(e -> window.setScene(paasivu));
+          Btakaisin.setOnAction(e -> takaisin());
 
 
 
@@ -277,7 +277,7 @@ import javax.swing.JOptionPane;
 
           Label label3 = new Label("Sukunimi");
 
-          Label label4 = new Label("lahiosoite");
+          Label label4 = new Label("Lähiosoite");
 
           Label label5 = new Label("Postinumero:");
 
@@ -379,7 +379,7 @@ import javax.swing.JOptionPane;
   		{
 
   			// naytetaan tiedot
-
+  			System.out.print("puh"+m_asiakas.getPuhelinnro());
   			textfield2.setText(m_asiakas.getEtunimi());
 
   			textfield3.setText(m_asiakas.getSukunimi());
@@ -400,6 +400,14 @@ import javax.swing.JOptionPane;
 
   	}
 
+    //Palataan takaisin pääsivulle
+  	public void takaisin(){
+  		window.setTitle("Mökki varausjärjestelmä");
+  		window.setScene(paasivu);
+  		
+  	}
+  	
+  	
   	/*
 
   	Viedään näytöllä olevat tiedot ooliolle ja kirjoitetaan ne tietokantaan
@@ -480,9 +488,9 @@ import javax.swing.JOptionPane;
 
   			m_asiakas.setPostitoimipaikka(textfield6.getText());
 
-  			m_asiakas.setEmail(textfield.getText());
+  			m_asiakas.setEmail(textfield7.getText());
 
-  			m_asiakas.setPuhelinnro(textfield.getText());
+  			m_asiakas.setPuhelinnro(textfield8.getText());
 
   			try {
 

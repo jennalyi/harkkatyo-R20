@@ -1,3 +1,7 @@
+/*
+ * Tekijä Joona Piispanen
+ */
+
 package harjoitustyo_test;
 
 import java.sql.Connection;
@@ -24,6 +28,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+
+//Luodaan lomake jolla voi varata sekä majoituksia että lisäpalveluja
 public class VaraaMokki {
 	BorderPane paneelivaraus, alaikkuna;
 	VBox oikea, oik;
@@ -69,17 +75,8 @@ public class VaraaMokki {
 		paaotsikko = new Label("Majoitusten varaus");
 		paaotsikko.setFont(new Font("Arial", 25));
 		paaotsikko.setStyle("-fx-padding: 10 0 10 140;");
-		//paaotsikko.setAlignment(Pos.BASELINE_CENTER);
-		//paaotsikko.setAlignment(Pos.TOP_LEFT);
+
 		paneelivaraus.setTop(paaotsikko);
-
-		//oik = new VBox(10);
-		//paneelivaraus.setRight(oik);
-
-		//oikea = new VBox();
-		//oikea.setPadding(new Insets(30,10,0,5));
-		//oikea.setPrefWidth(150);
-		//paneelivaraus.setLeft(oikea);
 		
 		//Luodaan gridpane johon kaikki grafiikka
 		keski = new GridPane();
@@ -94,7 +91,7 @@ public class VaraaMokki {
 		alaikkuna.setPadding(new Insets(10,30,10,30));
 		paneelivaraus.setBottom(alaikkuna);
 
-		//luodaan asiakas ja paikka hakuun liittyvä objectit
+		//luodaan asiakas ja paikka hakuun liittyvä objektit
 		asiakasjapaikkahaku();
 
 		//luodaan paikka ja asiakas tietoja varten kentät
@@ -179,10 +176,6 @@ public class VaraaMokki {
 		}
 
 
-		//Lotsikko.setText("Paikan perustiedot:"+"\n"+"Mökkivaara");		
-		//Lpaikanimi.setText("Mökkivaara");
-		//Lhinta.setText("250"+"per päivä");
-
 	}
 	
 	//Haetaan asiakkaan nimi ja tunnus
@@ -198,7 +191,6 @@ public class VaraaMokki {
 			}else{
 				idasiakas = Integer.parseInt(Tasiakas.getText());
 
-				//kantaolio.haetaanAsiakas(id);
 
 				Lasiakashaettu.setText(kantaolio.haetaanAsiakas(idasiakas));		
 				
@@ -223,15 +215,23 @@ public class VaraaMokki {
 		LocalDate varattuL = LocalDate.now();
 		LocalDate vahvistusL = LocalDate.now();
 		
-		//Haetaan datepicker kentistä alotus ja lopetus päivät
-		Date varattu = Date.valueOf(varattuL);
-		Date vahvistus = Date.valueOf(vahvistusL);
-		Date alotus = Date.valueOf(aloituspaiva.getValue());
-		Date lopetus = Date.valueOf(lopetuspaiva.getValue());
+
 		
 		//Tarkastetaan että asiakas varmasti syöttänyt hyväksytysti paikka ja asiakas tiedot
-		if(lippuasiakas && lippupaikka){
-		
+		 if(lippuasiakas && lippupaikka && aloituspaiva.getValue()!=null && lopetuspaiva.getValue()!=null){
+				
+			 //Tarkistetaan ettei päivämäärät samat
+			 if(aloituspaiva.getValue().isEqual(lopetuspaiva.getValue())){
+					
+					hintaselite.setText("Päivät eivät voi olla samat");
+				}else{
+			//Haetaan datepicker kentistä alotus ja lopetus päivät
+			Date varattu = Date.valueOf(varattuL);
+			Date vahvistus = Date.valueOf(vahvistusL);
+			Date alotus = Date.valueOf(aloituspaiva.getValue());
+			Date lopetus = Date.valueOf(lopetuspaiva.getValue());
+			
+			
 		//Tarkastetaan ettei ole varattu päivä
 		ArrayList<Pari> paivat1 = new ArrayList<Pari>();
 			paivat1 = kantaolio.haetaanPaivat(idmokki);
@@ -241,8 +241,6 @@ public class VaraaMokki {
 				if(aloituspaiva.getValue().isBefore(paivat1.get(i).alkupaiv) && lopetuspaiva.getValue().isAfter(paivat1.get(i).loppupaiv)){
 					lippuvarattu = true;
 				}
-				// Disable Monday, Tueday, Wednesday.
-				//if (item.isAfter(paivat.get(i).alkupaiv)&&item.isBefore(paivat.get(i).loppupaiv)){
 
 			}
 			}
@@ -266,11 +264,8 @@ public class VaraaMokki {
 				int tulos = kantaolio.varaaMokki(varausID, varattu, vahvistus, alotus, lopetus);
 				//Jos varaus onnistui
 				if(tulos ==1){
-					//hintaselite.setText("Hinta yhteensä: \n"+ kantaolio.haetaanMokkiHinta());
 					hintaselite.setText("Varaus onnistui");
 					Bvaraa.setVisible(false);
-					//Bhaepaikka.setVisible(false);
-					//Basiakas.setVisible(false);
 					Bmuuta.setVisible(true);
 					LuusPalv.setVisible(true);
 					TuusPalv.setVisible(true);
@@ -290,7 +285,7 @@ public class VaraaMokki {
 		//Jos numero arvo on virheellinen esim teksti
 		}catch (NumberFormatException exception){
 			hintaselite.setText("Id täytyy olla numero");
-		}
+		}}
 		//käyttäjä ei ole hakenut onnistuneet asiakasta ja paikkaa lomakkeelle
 		}else{
 			hintaselite.setText("Tietoja puuttuu");
@@ -330,7 +325,6 @@ public class VaraaMokki {
 					Bvaraus.setVisible(false);
 					nakyvyysNapeille(true);
 					Bvaraa.setVisible(false);
-					//hakunapitnakyvyys(false);
 					palveluNakyvyys(true);
 					haettuvaraus = true;
 					
@@ -359,16 +353,22 @@ public class VaraaMokki {
 	//Haetaan kaikki varauksen palvelut
 	public void palvelutNakyville(int varausID){
 		ArrayList<String> tulokset = new ArrayList<String>();
+		//Haetaan tietyn varauksen palvelujen id
 		tulokset = kantaolio.haePalvelut(varausID);
 		String palveluja = "Palvelusi: ";
 		if(tulokset.get(0)=="1"){
+			//Asetetaan palvelu id peräkkäin merkkijonoon
 			for(int i = 1; i<tulokset.size(); i++){
 				if(i !=1)
 					palveluja += ", ";
 				palveluja += tulokset.get(i);
 
 			}
+			//Asetetaan palvelu merkkijono lomakkeelle
 			LpalvIlmoitus2.setText(palveluja);
+		}else{
+			//Tyhjennetään listatut palvelut lomakkeelta
+			LpalvIlmoitus2.setText("");
 		}
 	}
 	
@@ -395,8 +395,6 @@ public class VaraaMokki {
 		Tvaraus.setText("");
 		LpalvIlmoitus2.setText("");
 		
-		//Lasiakashaettu.setText("");
-		
 		//Napeille alotus näkyvyys
 		nakyvyysNapeille(false);
 		hakunapitnakyvyys(true);
@@ -405,9 +403,9 @@ public class VaraaMokki {
 		palveluNakyvyys(false);
 		haettuvaraus = false;
 		
-		//Asetetaan tämä ja huominen päivä aloitus ja lopetus päiviks
+		//Asetetaan tämä ja huominen päivä aloitus ja lopetus päiviksi
 		aloituspaiva.setValue(LocalDate.now());
-		lopetuspaiva.setValue(aloituspaiva.getValue().plusDays(1));
+		lopetuspaiva.setValue(aloituspaiva.getValue());
 		//Otetaan varauksen tunnuksen kentän disable pois päältä
 		Tvaraus.setDisable(false);
 	}
@@ -429,7 +427,6 @@ public class VaraaMokki {
 				//Jos lisäys onnistui
 				if(tulosK != null){
 				LpalvIlmoitus.setText("Lisätty palvelu: \n"+tulosK);		
-				//hintaselite.setText("Hinta yhteensä: \n"+kantaolio.gethinta());
 				palveluNakyvyys(true);
 				palvelutNakyville(varausID);
 				}
@@ -458,7 +455,6 @@ public void poistaPalvelu(){
 			//Jos poisto onnistui
 			if(tulosK != null){
 			LpalvIlmoitus.setText("Poisto "+tulosK);		
-			//hintaselite.setText("Hinta yhteensä: \n"+kantaolio.gethinta());
 			palveluNakyvyys(true);
 			palvelutNakyville(varausID);
 			}
@@ -481,12 +477,6 @@ public void poistaOlemassa(){
 		
 		//Jos onnistui
 		if(tulos){
-			
-/*				Bvaraa.setVisible(false);
-			LuusPalv.setVisible(true);
-			TuusPalv.setVisible(true);
-			BuusPalv.setVisible(true);
-			BpoistPalv.setVisible(true);*/
 			haeUus();
 			hintaselite.setText("Poisto onnistui");
 		}
@@ -499,10 +489,14 @@ public void poistaOlemassa(){
 //Päivitetään varaus
 public void paivitavaraus(){
 	//Tarkastetaan että asiakas ja paikka haettu varmasti lomakkeelle
-	if(lippuasiakas && lippupaikka){
+	if(lippuasiakas && lippupaikka && aloituspaiva.getValue()!=null && lopetuspaiva.getValue()!=null){
 		
 		boolean lippuvarattu = false;
-	
+		 //Tarkistetaan ettei päivämäärät samat
+		 if(aloituspaiva.getValue().isEqual(lopetuspaiva.getValue())){
+				
+				hintaselite.setText("Päivät eivät voi olla samat");
+			}else{
 		//Otetaan päivät aloitus ja lopetus lomakkeelta
 	Date alotus = Date.valueOf(aloituspaiva.getValue());
 	Date lopetus = Date.valueOf(lopetuspaiva.getValue());
@@ -516,8 +510,6 @@ public void paivitavaraus(){
 		if(aloituspaiva.getValue().isBefore(paivat1.get(i).alkupaiv) && lopetuspaiva.getValue().isAfter(paivat1.get(i).loppupaiv)){
 			lippuvarattu = true;
 		}
-		// Disable Monday, Tueday, Wednesday.
-		//if (item.isAfter(paivat.get(i).alkupaiv)&&item.isBefore(paivat.get(i).loppupaiv)){
 
 	}}
 	
@@ -532,11 +524,6 @@ public void paivitavaraus(){
 			//Muutos onnistui
 			else if(tulos ==1){
 				hintaselite.setText("Muutos onnistui");
-/*				Bvaraa.setVisible(false);
-				LuusPalv.setVisible(true);
-				TuusPalv.setVisible(true);
-				BuusPalv.setVisible(true);
-				BpoistPalv.setVisible(true);*/
 			}
 			//Tuli kanta virhe päälekkäisen id takia
 			else if(tulos==3){
@@ -548,7 +535,7 @@ public void paivitavaraus(){
 	//Id muutakuin numero
 	}catch (NumberFormatException exception){
 		hintaselite.setText("Id täytyy olla numero");
-	}}
+	}}}
 	//Asiakas tai paikka tietoja ei haettu kunnolla
 	else{
 		hintaselite.setText("Tietoja puuttuu");
@@ -570,13 +557,11 @@ public void paivitavaraus(){
 		paikka.setPrefWidth(150);
 		paikka.setMaxWidth(150);
 		Bhaepaikka = new Button("Hae paikka");
-		//Bhaepaikka.setMinWidth(keski.getPrefWidth());
 		Lmokki = new Label("Syötä varattava mökki");
 		Tmokki = new TextField();
 		
 		//Luodaan asiakaskentät
 		Lasiakas = new Label("Syötä haettava asiakas");
-		//Lasiakas.setStyle("-fx-padding: 10 0 0 0;");
 		Tasiakas = new TextField();
 		Tasiakas.setMinWidth(keski.getPrefWidth());
 		Tasiakas.setPrefWidth(150);
@@ -584,7 +569,6 @@ public void paivitavaraus(){
 		
 		//Luodaan nappi jolla päästään takaisin pääikkunaan
 		Basiakas = new Button("Hae asiakasta");
-		//Basiakas.setMinWidth(keski.getPrefWidth());
 		Btakaisin = new Button("takaisin");
 		
 		//Asetetaan ylläloudut kentät gridpaneen
@@ -598,7 +582,6 @@ public void paivitavaraus(){
 		Lasiakas.setStyle("-fx-padding: 20 0 0 0;");
 		keski.add(Lasiakas, 1, 6);
 		keski.add(Tasiakas, 1, 7);
-		//oik.getChildren().addAll(Bhaepaikka,Basiakas);
 		keski.add(Bvaraus, 2, 1);
 		keski.add(Bhaepaikka, 2, 5);
 		keski.add(Basiakas, 2, 7);
@@ -610,18 +593,11 @@ public void paivitavaraus(){
 		Lotsikko = new Label();
 		Lpaikanimi = new Label();
 		Lhinta = new Label();
-		//oikea.getChildren().addAll(Lotsikko,Lpaikanimi, Lhinta);
 		Lasiakasot = new Label();
-		//Lasiakasot.setAlignment(Pos.BASELINE_LEFT);
 		Lasiakashaettu = new Label();
 		Lnumero = new Label();		
-		//Lasiakasot.setStyle("-fx-padding: 40 0 0 0;");
 		hintaselite = new Label("");
 		Lvirhevaraus = new Label();
-		//Laskee yhteen lasketun hinnan
-		//hintayhteensa = new Label("");
-		//hintaselite.setStyle("-fx-padding: 70 0 0 10;");
-		//oikea.getChildren().addAll(Lasiakasot,Lasiakashaettu, Lnumero, hintaselite, hintayhteensa);
 		
 		//Asetetaan selite tekstit gridpaneen
 		keski.add(Lvirhevaraus, 0, 1);
@@ -666,9 +642,6 @@ public void paivitavaraus(){
 		BuusPalv = new Button("Lisää");
 		LpalvIlmoitus = new Label("");
 		LpalvIlmoitus2 = new Label("");
-		//keski.add(LpalvHae, 1, 16);
-		//keski.add(TpalvHae, 1, 17);
-		//keski.add(BpalvHae, 2, 17);
 		
 		//Asetetaan palvelu kentät ja palvelu napit gridpaneen
 		keski.add(LuusPalv, 1, 14);
@@ -689,7 +662,6 @@ public void paivitavaraus(){
 		kalenterivihje = new Label("Majoituksen ajankohdan valinta");
 		kalenterivihje.setFont(new Font("Arial", 12));
 		kalenterivihje.setStyle("-fx-padding: 10 0 0 0;-fx-font-weight: bold;");
-		//kalenterivihje.setStyle("-fx-font-weight: bold;");
 		
 		//Luodaan datepickerit aloitus ja lopetuspäivälle
 		aloituspaiva = new DatePicker();
@@ -702,11 +674,6 @@ public void paivitavaraus(){
 					@Override
 					public void updateItem(LocalDate item, boolean empty) {
 						super.updateItem(item, empty);
-
-						/*						if (item.isBefore(aloituspaiva.getValue().plusDays(1))) {
-							setDisable(true);
-							setStyle("-fx-background-color: #ff4444;");
-						}*/
 						
 						ArrayList<Pari> paivat = new ArrayList<Pari>();
 						
@@ -717,7 +684,6 @@ public void paivitavaraus(){
 								
 								//Käydään lävitse varatut päivät lävite ja merkataan ne punaisella
 								for(int i = 0; i<paivat.size(); i++){
-									// Disable Monday, Tueday, Wednesday.
 									if (item.isAfter(paivat.get(i).alkupaiv.minusDays(1))&&item.isBefore(paivat.get(i).loppupaiv.plusDays(1))){
 										setDisable(true);
 
@@ -734,12 +700,8 @@ public void paivitavaraus(){
 		aloituspaiva.setDayCellFactory(dayCellFactory);
 		lopetuspaiva.setDayCellFactory(dayCellFactory);
 		//Asetetaan lopetus päiväksi huominen päivä
-		lopetuspaiva.setValue(aloituspaiva.getValue().plusDays(1));
+		lopetuspaiva.setValue(aloituspaiva.getValue());
 
-		//paiva = lopetuspaiva.getValue();
-
-
-		//keski.getChildren().addAll(kalenterivihje,new Label("Valitse aloituspäivä:"), aloituspaiva, new Label("Valitse lopetuspäivä:"),lopetuspaiva);
 	}
 	
 	//Asetetaan napeille haluttu näkyvyys
